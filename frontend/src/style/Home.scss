@@ -1,0 +1,27 @@
+#video-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 50px;
+    margin: 0 auto;
+    width: 90vw;
+}
+
+.video {
+    min-width: 138px;
+    width: 20vw;
+    height: auto;
+}
+
+.item-empty {
+    visibility: hidden;
+}
+
+@media only screen and (max-width: 762px) {
+    .video {
+        min-width: none;
+        width: 100%;
+        margin: 0 20px;
+        height: fit-content;
+    }
+}

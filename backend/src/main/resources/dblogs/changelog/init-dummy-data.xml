@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+    <changeSet id="insertChannels" author="MDeLuise">
+        <insert tableName="channels">
+            <column name="id" value="UCVThyXNYXDC9UhDbI8LtghQ"/>
+            <column name="name" value="Proton" />
+            <column name="thumbnail_link" value="https://yt3.ggpht.com/7gH1GpiT0XGWatAc27MwqNH8PdUf1LC5zz3MS_n5yJ4MO9hoYXcS54ay5JlOfNAZNx8gdcEUig=s240-c-k-c0x00ffffff-no-rj" />
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="insertSubscriptions" author="MDeLuise">
+        <insert tableName="subscriptions">
+            <column name="id" value="99"/>
+            <column name="channel_id" value="UCVThyXNYXDC9UhDbI8LtghQ"/>
+            <column name="user_id" value="99"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
