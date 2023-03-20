@@ -1,0 +1,50 @@
+.video {
+    display: flex;
+    flex-direction: column;
+
+    img {
+        width: 100%;
+        object-fit: cover;
+        aspect-ratio: 16 / 9;
+    }
+
+    &>*:not(img) {
+        padding: 2% 0%;
+        margin: 0;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .video-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: auto;
+        color: var(--text-accent-color);
+        font-weight: 500;
+
+        &>* {
+            margin-bottom: 0;
+            margin-top: auto;
+            padding: 0;
+        }
+
+        a p {
+            margin: 0;
+        }
+    }
+
+    div {
+        position: relative;
+    }
+
+    .duration {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        margin: 0;
+        background-color: black;
+    }
+}

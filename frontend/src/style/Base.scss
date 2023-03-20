@@ -1,0 +1,11 @@
+.clickable {
+    cursor: pointer;
+
+    &:hover {
+        color: var(--hover-accent-color);
+    }
+}
+
+.error {
+    color: red;
+}

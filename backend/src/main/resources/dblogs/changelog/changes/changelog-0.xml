@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="createUserTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="application_users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="application_users">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createChannelTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="channels"/>
+            </not>
+        </preConditions>
+        <createTable tableName="channels">
+            <column name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(100)"/>
+            <column name="thumbnail_link" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createSubscriptionTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="subscriptions"/>
+            </not>
+        </preConditions>
+        <createTable tableName="subscriptions">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="channel_id" type="varchar(255)">
+                <constraints nullable="false" foreignKeyName="fk_subscription_channel" references="channels(id)"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_subscription_user" references="application_users(id)"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="channel_id, user_id"
+                constraintName="subscription_unique"
+                tableName="subscriptions"
+        />
+    </changeSet>
+
+
+    <changeSet id="createVideoTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="video"/>
+            </not>
+        </preConditions>
+        <createTable tableName="video">
+            <column name="id" type="varchar(255)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="channel_id" type="varchar(255)">
+                <constraints nullable="false" foreignKeyName="fk_video_channel" references="channels(id)"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="published_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createQuotaCounterTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="quotas"/>
+            </not>
+        </preConditions>
+        <createTable tableName="quotas">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="quota_day" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quota_value" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createApiKeyTable" author="MDeLuise">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="api_keys"/>
+            </not>
+        </preConditions>
+        <createTable tableName="api_keys">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_apiKey_user" references="application_users(id)"/>
+            </column>
+            <column name="api_key_value" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+            </column>
+            <column name="created_on" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="user_id, name"
+                constraintName="api_key_name_unique"
+                tableName="api_keys"
+        />
+    </changeSet>
+
+</databaseChangeLog>

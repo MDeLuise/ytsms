@@ -1,0 +1,22 @@
+#settings {
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 50px;
+
+    .section {
+        color: var(--text-accent-color);
+        border-bottom: 1px solid var(--text-accent-color);
+        margin-top: 50px;
+        margin-bottom: 10px;
+    }
+
+    #subscription-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+
+        span i {
+            margin: 0 5px;
+        }
+    }
+}
