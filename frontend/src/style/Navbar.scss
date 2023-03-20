@@ -1,0 +1,21 @@
+#navbar {
+    display: flex;
+    margin: 20px;
+
+    span {
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    div {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        p {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+    }
+}
