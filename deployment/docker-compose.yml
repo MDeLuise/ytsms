@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  backend:
+#    container_name: ytsms-backend
+#    build:
+#      context: ../
+#      dockerfile: deployment/Dockerfile
+    image: msdeluise/ytsms-backend:1.0.0
+    #ports:
+    #  - "8080:8080/tcp"
+    env_file: backend.env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    restart: always
+    env_file: backend.env
+
+  frontend:
+    # container-name: ytsms-frontend
+    # build:
+    #  content: ../frontend/
+    #  dockerfile: deployment/Dockerfile
+    image: msdeluise/ytsms-frontend:1.0.0
+    env_file: frontend.env
+    links:
+      - backend
+
+  reverse-proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - backend
+      - frontend

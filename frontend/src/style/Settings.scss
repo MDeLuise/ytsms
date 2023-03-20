@@ -1,0 +1,42 @@
+#settings {
+    width: 90%;
+    margin: 0 auto;
+
+    .section {
+        color: var(--text-accent-color);
+        border-bottom: 1px solid var(--text-accent-color);
+        margin: 15px 0;
+    }
+
+    #subscription-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+
+        span i {
+            margin: 0 5px;
+        }
+    }
+
+    form {
+        padding: 20px 0;
+
+        & > * {
+            margin: 0 10px;
+        }
+
+        label {
+            margin-left: 10px;
+        }
+
+        #invidious-label {
+            margin-right: 10px;
+        }
+
+        &#backend-form button {
+            margin-top: 20px;
+        }
+    }
+
+    
+}
