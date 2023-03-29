@@ -70,6 +70,13 @@ Change the properties values according to your system.
 After a successful [run](#how-to-run) of the system, the swagger UI will be available at `http://localhost:8085/api/swagger-ui/index.html`
 ![images/swagger.png](images/swagger.png)
 
+# FAQ
+* How can I get the `channel id` of a youtube channel?
+  
+  You can do it in two ways:
+  * go to the channel homepage and run in the javascript console `ytInitialData.metadata.channelMetadataRenderer.externalId`
+  * go to the channel homepage, view the page source and search for the value `browse_id`
+
 # Contributing
 Fell free to contribute! Just a few useful information below.
 
