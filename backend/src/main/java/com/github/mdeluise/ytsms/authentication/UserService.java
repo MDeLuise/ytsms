@@ -82,4 +82,9 @@ public class UserService {
     public void removeAll() {
         userRepository.deleteAll();
     }
+
+
+    public long count() {
+        return userRepository.count();
+    }
 }

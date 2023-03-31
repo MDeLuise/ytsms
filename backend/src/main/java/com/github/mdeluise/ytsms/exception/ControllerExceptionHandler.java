@@ -13,7 +13,7 @@ import java.util.Date;
 @ResponseBody
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(com.github.mdeluise.ytsms.exception.ResourceNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorMessage> entityNotFoundException(
         com.github.mdeluise.ytsms.exception.ResourceNotFoundException ex,
         WebRequest request) {

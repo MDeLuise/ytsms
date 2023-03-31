@@ -57,6 +57,7 @@ JWT_SECRET=putTheSecretHere
 JWT_EXP=1
 MYSQL_ROOT_PASSWORD=root
 MYSQL_DATABASE=bootdb
+USERS_LIMIT=-1 # including the admin account, so <= 0 if undefined, >= 2 if defined
 ```
 Change the properties values according to your system.
 
