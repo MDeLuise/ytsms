@@ -11,13 +11,12 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final com.github.mdeluise.ytsms.authentication.UserRepository userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
 
     @Autowired
-    public UserService(com.github.mdeluise.ytsms.authentication.UserRepository userRepository,
-                       PasswordEncoder encoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.encoder = encoder;
     }

@@ -15,6 +15,8 @@ public class VideoDTO {
     private Date publishedAt;
     @Schema(description = "Name of the channel that published the video.", example = "Proton")
     private String channelName;
+    @Schema(description = "ID of the channel that published the video.", example = "UCVThyXNYXDC9UhDbI8LtghQ")
+    private String channelId;
     @Schema(description = "Link to the video thumbnail.", example = "https://i3.ytimg.com/vi/6Rz2M7FmJBE/hqdefault.jpg")
     private String thumbnailLink;
     @Schema(description = "View number of the video.", example = "2196")
@@ -58,6 +60,16 @@ public class VideoDTO {
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
 

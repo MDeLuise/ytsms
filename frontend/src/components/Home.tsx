@@ -1,19 +1,19 @@
 import { AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate, useSearchParams } from "react-router-dom";
 import Video from "./Video";
 import "../style/Home.scss";
 import "../style/Base.scss";
 import Navbar from "./Navbar";
 import ReactPaginate from "react-paginate";
-import { boolean } from "yargs";
 
 export default function Home(props: { isLoggedIn: () => boolean, requestor: AxiosInstance }) {
     let navigate: NavigateFunction = useNavigate();
     const [videoRes, setVideoRes] = useState<any>([]);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const fetchVideo = (pageNum: number) => {
+    const fetchAllVideo = (pageNum: number) => {
         props.requestor.get(`video?sortBy=publishedAt&sortDir=DESC&pageSize=25&pageNo=${pageNum}`, {})
             .then((response) => {
                 setTotalPages(response.data.totalPages);
@@ -24,6 +24,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             id={vid.id}
                             title={vid.title}
                             channelName={vid.channelName}
+                            channelId={vid.channelId}
                             thumbnailLink={vid.thumbnailLink}
                             view={vid.view}
                             publishedAt={vid.publishedAt} />)
@@ -32,6 +33,38 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
             })
             .catch();
     }
+
+
+    const fetchVideoFromChannels = (pageNum: number, channelIds: string) => {
+        props.requestor.get(`video/${channelIds}?sortBy=publishedAt&sortDir=DESC&pageSize=25&pageNo=${pageNum}`, {})
+            .then((response) => {
+                setTotalPages(response.data.totalPages);
+                let video: any[] = [];
+                response.data["content"].forEach((vid: any) => {
+                    video.push(
+                        <Video
+                            id={vid.id}
+                            title={vid.title}
+                            channelName={vid.channelName}
+                            channelId={vid.channelId}
+                            thumbnailLink={vid.thumbnailLink}
+                            view={vid.view}
+                            publishedAt={vid.publishedAt} />)
+                })
+                setVideoRes(video);
+            })
+            .catch();
+    }
+
+
+    const fetchVideo = (pageNum: number) => {
+        if (searchParams.has("channels")) {
+            fetchVideoFromChannels(pageNum, searchParams.get("channels") as string);
+        } else {
+            fetchAllVideo(pageNum);
+        }
+    }
+
 
     useEffect(() => {
         if (!props.isLoggedIn()) {
@@ -53,7 +86,8 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                     window.scrollTo({
                         top: 0,
                         left: 0
-                    })}
+                    })
+                }
                 }
                 pageRangeDisplayed={5}
                 pageCount={totalPages}

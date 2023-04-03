@@ -1,6 +1,6 @@
 import "../style/Video.scss";
 
-export default function Video(props: { title: string, channelName: string, id: string, thumbnailLink: string, view: Number, publishedAt: string }) {
+export default function Video(props: { title: string, channelName: string, channelId: string, id: string, thumbnailLink: string, view: Number, publishedAt: string }) {
     const timeSince = (date: Date) => {
         var seconds = Math.floor(((new Date()).valueOf() - date.valueOf()) / 1000);
         var interval = seconds / 31536000;
@@ -38,24 +38,18 @@ export default function Video(props: { title: string, channelName: string, id: s
     };
 
     return (
-        // <div className="video">
-        //     <img src={props.thumbnailLink} />
-        //     <h6 className="title">{props.title}</h6>
-        //     <p className="channel-name">{props.channelName}</p>
-        //     <div className="video-footer">
-        //         <p className="published-at">{timeSince(new Date(props.publishedAt))} ago</p>
-        //         <p className="view-count">{props.view.toString()} views</p>
-        //     </div>
-        // </div>
         <div className="video">
             <a href={createLink(props.id)} target="_blank">
                 <img className="thumbnail" src={props.thumbnailLink} />
                 <h6 className="title">{props.title}</h6>
-                <div className="video-footer">
-                    <p className="channel-name">{props.channelName}</p>
-                    <p className="published-at">{timeSince(new Date(props.publishedAt))} ago</p>
-                </div>
             </a>
+            <div className="video-footer">
+                <a href={`?channels=${props.channelId}`}>
+                    <p className="channel-name">{props.channelName}</p>
+                </a>
+                <p className="published-at">{timeSince(new Date(props.publishedAt))} ago</p>
+            </div>
+
         </div>
     );
 }

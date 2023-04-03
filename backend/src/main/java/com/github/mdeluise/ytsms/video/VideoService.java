@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class VideoService {
     }
 
 
-    public Video save(com.github.mdeluise.ytsms.video.Video toSave) {
+    public Video save(Video toSave) {
         return videoRepository.save(toSave);
     }
 
@@ -56,5 +57,10 @@ public class VideoService {
 
     public void removeAll() {
         videoRepository.findAll().forEach(this::remove);
+    }
+
+
+    public Page<Video> getAllByChannelIds(Pageable paging, List<String> channelIds) {
+        return videoRepository.findByChannelIdIn(channelIds, paging);
     }
 }

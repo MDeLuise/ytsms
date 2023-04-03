@@ -35,7 +35,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home requestor={axiosReq} isLoggedIn={isLoggedIn} />} />
+        <Route path="/:channels?" element={<Home requestor={axiosReq} isLoggedIn={isLoggedIn} />} />
         <Route path="/auth" element={<Auth requestor={axiosReq} />} />
         <Route path="/settings" element={<Settings requestor={axiosReq} isLoggedIn={isLoggedIn} />} />
       </Routes>
