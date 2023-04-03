@@ -21,7 +21,8 @@ public class VideoDTO {
     private String thumbnailLink;
     @Schema(description = "View number of the video.", example = "2196")
     private Long view;
-
+    @Schema(description = "Duration of the video (expressed in seconds).", example = "600")
+    private Long secondsDuration;
 
     public String getId() {
         return id;
@@ -90,6 +91,16 @@ public class VideoDTO {
 
     public void setView(Long view) {
         this.view = view;
+    }
+
+
+    public Long getSecondsDuration() {
+        return secondsDuration;
+    }
+
+
+    public void setSecondsDuration(Long secondsDuration) {
+        this.secondsDuration = secondsDuration;
     }
 
 

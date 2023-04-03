@@ -27,6 +27,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             channelId={vid.channelId}
                             thumbnailLink={vid.thumbnailLink}
                             view={vid.view}
+                            duration={vid.secondsDuration}
                             publishedAt={vid.publishedAt} />)
                 })
                 setVideoRes(video);
@@ -49,6 +50,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             channelId={vid.channelId}
                             thumbnailLink={vid.thumbnailLink}
                             view={vid.view}
+                            duration={vid.secondsDuration}
                             publishedAt={vid.publishedAt} />)
                 })
                 setVideoRes(video);

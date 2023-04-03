@@ -40,4 +40,14 @@ public class ChannelService {
             remove(channel.getId());
         }
     }
+
+
+    public Channel get(String id) {
+        return channelRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
+
+    public boolean exists(String id) {
+        return channelRepository.existsById(id);
+    }
 }

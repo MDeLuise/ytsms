@@ -58,6 +58,8 @@ JWT_EXP=1
 MYSQL_ROOT_PASSWORD=root
 MYSQL_DATABASE=bootdb
 USERS_LIMIT=-1 # including the admin account, so <= 0 if undefined, >= 2 if defined
+YOUTUBE_KEY=
+VIDEO_REFRESH=* * 1 * * *
 ```
 Change the properties values according to your system.
 
@@ -78,6 +80,16 @@ After a successful [run](#how-to-run) of the system, the swagger UI will be avai
   * go to the channel homepage and run in the javascript console `ytInitialData.metadata.channelMetadataRenderer.externalId`
   * go to the channel homepage, view the page source and search for the value `browse_id`
 
+* What distinguishes `official youtube api` and `scraping` modes?
+  
+  The `official youtube api` mode offers the following advantages:
+  * retrieve the video duration
+  * retrieve the channels image thumbnails
+  
+  The `scraping` mode offers the following advantages:
+  * no need to use any youtube api key
+  * no quota restrictions (imposed by [youtube](https://developers.google.com/youtube/v3/getting-started#quota))
+  * increased anonymization
 # Contributing
 Fell free to contribute! Just a few useful information below.
 

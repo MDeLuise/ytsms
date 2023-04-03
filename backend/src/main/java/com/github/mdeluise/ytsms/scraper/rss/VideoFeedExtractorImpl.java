@@ -1,4 +1,4 @@
-package com.github.mdeluise.ytsms.scraper;
+package com.github.mdeluise.ytsms.scraper.rss;
 
 import com.github.mdeluise.ytsms.channel.Channel;
 import com.github.mdeluise.ytsms.channel.ChannelRepository;
@@ -29,19 +29,28 @@ import java.util.Scanner;
 @Component
 @Primary
 @Profile("!integration")
-public class VideoFeedScraperImpl implements VideoFeedScraper {
+public class VideoFeedExtractorImpl implements VideoFeedExtractor {
     private final String rssUrl = "https://www.youtube.com/feeds/videos.xml?channel_id=";
     private final ChannelRepository channelRepository;
 
 
     @Autowired
-    public VideoFeedScraperImpl(ChannelRepository channelRepository) {
+    public VideoFeedExtractorImpl(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
     }
 
 
     @Override
-    public Collection<Video> getVideo(String channelId) throws IOException, SAXException, ParserConfigurationException {
+    public Collection<Video> getVideo(String... channelIds) throws IOException, SAXException, ParserConfigurationException {
+        Collection<Video> toReturn = new HashSet<>();
+        for (String channelId : channelIds) {
+            toReturn.addAll(getVideo(channelId));
+        }
+        return toReturn;
+    }
+
+
+    private Collection<Video> getVideo(String channelId) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         String pageContent = getPageContent(rssUrl + channelId);
         Document doc = builder.parse(new InputSource(new StringReader(pageContent)));

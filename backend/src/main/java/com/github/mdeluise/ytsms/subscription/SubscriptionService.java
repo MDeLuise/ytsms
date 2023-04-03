@@ -60,7 +60,7 @@ public class SubscriptionService {
         if (!channelRepository.existsById(entityToSave.getChannel().getId())) {
             Channel newChannel = channelRepository.save(entityToSave.getChannel());
             entityToSave.setChannel(newChannel);
-            videoScraper.saveNewVideo(newChannel);
+            new Thread(() -> videoScraper.saveNewVideo(newChannel)).start();
         }
         return subscriptionRepository.save(entityToSave);
     }

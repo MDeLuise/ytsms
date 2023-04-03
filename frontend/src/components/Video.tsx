@@ -1,7 +1,7 @@
 import "../style/Video.scss";
 
-export default function Video(props: { title: string, channelName: string, channelId: string, id: string, thumbnailLink: string, view: Number, publishedAt: string }) {
-    const timeSince = (date: Date) => {
+export default function Video(props: { title: string, channelName: string, channelId: string, id: string, thumbnailLink: string, view: Number, publishedAt: string, duration: number | null }) {
+    const timeSince = (date: Date): string => {
         var seconds = Math.floor(((new Date()).valueOf() - date.valueOf()) / 1000);
         var interval = seconds / 31536000;
         if (interval > 1) {
@@ -27,6 +27,25 @@ export default function Video(props: { title: string, channelName: string, chann
     }
 
 
+    const formatDuration = (duration: number): string => {
+        let hours: number = Math.floor(duration / 3600);
+        duration %= 3600;
+        let minutes: number = Math.floor(duration / 60);
+        let seconds: number = Math.floor(duration % 60);
+        let formatted: string = "";
+        if (hours > 0) {
+            formatted += `${hours}h`;
+        }
+        if (minutes > 0) {
+            formatted += `${minutes}m`;
+        }
+        if (seconds > 0) {
+            formatted += `${seconds}s`;
+        }
+        return formatted;
+    }
+
+
     const createLink = (videoId: string) => {
         switch (localStorage.getItem("backend")) {
             case "invidious":
@@ -40,7 +59,10 @@ export default function Video(props: { title: string, channelName: string, chann
     return (
         <div className="video">
             <a href={createLink(props.id)} target="_blank">
-                <img className="thumbnail" src={props.thumbnailLink} />
+                <div>
+                    <img className="thumbnail" src={props.thumbnailLink} />
+                    {props.duration && <p className="duration">{formatDuration(props.duration)}</p>}
+                </div>
                 <h6 className="title">{props.title}</h6>
             </a>
             <div className="video-footer">

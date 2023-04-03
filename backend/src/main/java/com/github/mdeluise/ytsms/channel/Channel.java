@@ -15,6 +15,7 @@ public class Channel implements IdentifiedEntity<String> {
     @Id
     private String id;
     private String name;
+    private String thumbnailLink;
     @OneToMany(mappedBy = "channel")
     private Set<Video> video;
 
@@ -36,6 +37,16 @@ public class Channel implements IdentifiedEntity<String> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public String getThumbnailLink() {
+        return thumbnailLink;
+    }
+
+
+    public void setThumbnailLink(String thumbnailLink) {
+        this.thumbnailLink = thumbnailLink;
     }
 
 

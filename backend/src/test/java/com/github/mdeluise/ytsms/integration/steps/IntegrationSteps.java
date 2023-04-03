@@ -1,14 +1,14 @@
 package com.github.mdeluise.ytsms.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mdeluise.ytsms.DummyVideoFeedScraper;
+import com.github.mdeluise.ytsms.DummyVideoFeedExtractor;
 import com.github.mdeluise.ytsms.authentication.User;
 import com.github.mdeluise.ytsms.authentication.UserService;
 import com.github.mdeluise.ytsms.authentication.payload.request.LoginRequest;
 import com.github.mdeluise.ytsms.authentication.payload.request.SignupRequest;
 import com.github.mdeluise.ytsms.channel.Channel;
-import com.github.mdeluise.ytsms.scraper.VideoFeedScraper;
 import com.github.mdeluise.ytsms.scraper.VideoScraper;
+import com.github.mdeluise.ytsms.scraper.rss.VideoFeedExtractor;
 import com.github.mdeluise.ytsms.subscription.SubscriptionDTO;
 import com.github.mdeluise.ytsms.subscription.SubscriptionService;
 import com.github.mdeluise.ytsms.video.Video;
@@ -40,7 +40,7 @@ public class IntegrationSteps {
     private final SubscriptionService subscriptionService;
     private final VideoService videoService;
     private final VideoScraper videoScraper;
-    private final VideoFeedScraper videoFeedScraper;
+    private final VideoFeedExtractor videoFeedExtractor;
     private final UserService userService;
     private final MockMvc mockMvc;
     private final StepData stepData;
@@ -56,12 +56,12 @@ public class IntegrationSteps {
 
 
     public IntegrationSteps(SubscriptionService subscriptionService, VideoService videoService,
-                            DummyVideoFeedScraper videoFeedScraper, VideoScraper videoScraper, UserService userService,
+                            DummyVideoFeedExtractor videoFeedScraper, VideoScraper videoScraper, UserService userService,
                             MockMvc mockMvc, StepData stepData, ObjectMapper objectMapper) {
         this.subscriptionService = subscriptionService;
         this.videoService = videoService;
         this.videoScraper = videoScraper;
-        this.videoFeedScraper = videoFeedScraper;
+        this.videoFeedExtractor = videoFeedScraper;
         this.userService = userService;
         this.mockMvc = mockMvc;
         this.stepData = stepData;
@@ -213,7 +213,7 @@ public class IntegrationSteps {
     @And("the following channelVideo")
     public void theFollowingChannelVideo(List<ChannelVideoWrapper> channelVideoList) {
         for (ChannelVideoWrapper channelVideo : channelVideoList) {
-            ((DummyVideoFeedScraper) videoFeedScraper).addVideoForChannel(
+            ((DummyVideoFeedExtractor) videoFeedExtractor).addVideoForChannel(
                 channelVideo.channelId(), channelVideo.video());
         }
     }

@@ -29,6 +29,7 @@ public class Video implements IdentifiedEntity<String> {
     @NotBlank
     private String thumbnailLink;
     private Long view;
+    private Long secondsDuration;
 
 
     @Override
@@ -90,6 +91,16 @@ public class Video implements IdentifiedEntity<String> {
 
     public void setView(Long view) {
         this.view = view;
+    }
+
+
+    public Long getSecondsDuration() {
+        return secondsDuration;
+    }
+
+
+    public void setSecondsDuration(Long secondsDuration) {
+        this.secondsDuration = secondsDuration;
     }
 
 

@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import { useState } from "react";
 
-export default function Subscription(props: {id: string, channelName: string, requestor: AxiosInstance}) {
+export default function Subscription(props: {id: string, channelName: string, channelId: string, requestor: AxiosInstance}) {
     const [removed, setRemoved] = useState<boolean>(false);
     const removeSubscription = () => {
         props.requestor.delete("subscription/" + props.id, {})
@@ -14,7 +14,7 @@ export default function Subscription(props: {id: string, channelName: string, re
     return (
         <span hidden={removed}>
             <i className="clickable fa fa-trash" aria-hidden="true" onClick={removeSubscription}></i>
-            <span>{props.channelName}</span>
+            <span>{props.channelName != undefined ? props.channelName : props.channelId}</span>
         </span>
     )
 }

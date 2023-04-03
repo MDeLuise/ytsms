@@ -21,6 +21,7 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                     subscriptions.push(
                         <Subscription
                             channelName={sub.channelName}
+                            channelId={sub.channelId}
                             requestor={props.requestor}
                             id={sub.id} />
                     )

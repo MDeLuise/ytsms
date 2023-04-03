@@ -36,4 +36,16 @@
             margin: 0;
         }
     }
+
+    div {
+        position: relative;
+    }
+
+    .duration {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        margin: 0;
+        background-color: black;
+    }
 }
