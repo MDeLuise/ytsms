@@ -6,12 +6,15 @@ import "../style/Home.scss";
 import "../style/Base.scss";
 import Navbar from "./Navbar";
 import ReactPaginate from "react-paginate";
+import Avatar from "./Avatar";
 
 export default function Home(props: { isLoggedIn: () => boolean, requestor: AxiosInstance }) {
     let navigate: NavigateFunction = useNavigate();
     const [videoRes, setVideoRes] = useState<any>([]);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [channels, setChannels] = useState<string[]>([]);
 
     const fetchAllVideo = (pageNum: number) => {
         props.requestor.get(`video?sortBy=publishedAt&sortDir=DESC&pageSize=25&pageNo=${pageNum}`, {})
@@ -28,12 +31,13 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             thumbnailLink={vid.thumbnailLink}
                             view={vid.view}
                             duration={vid.secondsDuration}
-                            publishedAt={vid.publishedAt} />)
-                })
+                            publishedAt={vid.publishedAt} />
+                    );
+                });
                 setVideoRes(video);
             })
             .catch();
-    }
+    };
 
 
     const fetchVideoFromChannels = (pageNum: number, channelIds: string) => {
@@ -56,7 +60,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                 setVideoRes(video);
             })
             .catch();
-    }
+    };
 
 
     const fetchVideo = (pageNum: number) => {
@@ -65,13 +69,37 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
         } else {
             fetchAllVideo(pageNum);
         }
-    }
+    };
+
+
+    const getAllChannels = () => {
+        props.requestor.get("subscription", {})
+            .then((response) => {
+                let channels: any[] = [];
+                response.data.forEach((sub: any) => {
+                    channels.push(
+                        <Avatar
+                            text={sub.channelName}
+                            id={sub.channelId}
+                            src={sub.channelThumbnailLink} />
+                    );
+                });
+                setChannels(channels);
+            })
+            .catch();
+    };
 
 
     useEffect(() => {
         if (!props.isLoggedIn()) {
             navigate("/auth");
         }
+        if (searchParams.has("page")) {
+            setCurrentPage(Number(searchParams.get("page")));
+        } else {
+            setCurrentPage(0);
+        }
+        getAllChannels();
         fetchVideo(0);
     }, []);
 
@@ -79,21 +107,35 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     return (
         <>
             <Navbar />
+            <div id="channel-filter" style={{
+                height: "fit-content",
+                display: "flex",
+                gap: "20px",
+                margin: "40px 20px",
+                borderBottom: "1px solid var(--color)",
+                paddingBottom: "10px",
+                overflow: "scroll"
+            }}>
+                {channels}
+            </div>
+
             <div id="video-wrapper">{videoRes}</div>
             <ReactPaginate
                 breakLabel="..."
                 nextLabel=">"
                 onPageChange={(e) => {
                     fetchVideo(e.selected);
+                    setCurrentPage(e.selected + 1);
+                    searchParams.set("page", (e.selected != undefined ? e.selected.toString : "0") as string);
                     window.scrollTo({
                         top: 0,
                         left: 0
                     })
-                }
-                }
+                }}
                 pageRangeDisplayed={5}
                 pageCount={totalPages}
                 previousLabel="<"
+                initialPage={currentPage}
             />
         </>
     );

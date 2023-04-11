@@ -14,6 +14,8 @@ public class SubscriptionDTO {
     private String channelName;
     @Schema(description = "User ID of the subscription.", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long userId;
+    @Schema(description = "Link of the subscription channel's thumbnail.", example = "TO_INSERT", accessMode = Schema.AccessMode.READ_ONLY)
+    private String channelThumbnailLink;
 
 
     public Long getId() {
@@ -43,6 +45,16 @@ public class SubscriptionDTO {
 
     public String getChannelName() {
         return channelName;
+    }
+
+
+    public String getChannelThumbnailLink() {
+        return channelThumbnailLink;
+    }
+
+
+    public void setChannelThumbnailLink(String channelThumbnailLink) {
+        this.channelThumbnailLink = channelThumbnailLink;
     }
 
 

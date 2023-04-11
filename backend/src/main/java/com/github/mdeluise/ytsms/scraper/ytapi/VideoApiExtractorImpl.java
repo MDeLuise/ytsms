@@ -155,10 +155,10 @@ public class VideoApiExtractorImpl implements VideoApiExtractor {
     private void updateChannel(Channel channel) {
         ChannelSnippet channelSnippet = channel.getSnippet();
         com.github.mdeluise.ytsms.channel.Channel savedChannel = channelService.get(channel.getId());
-        String thumbnailUrl = channel.getSnippet().getThumbnails().getHigh().getUrl();
+        String thumbnailUrl = channel.getSnippet().getThumbnails().getMedium().getUrl();
         boolean savedChannelModified = false;
         if (!thumbnailUrl.equals(savedChannel.getThumbnailLink())) {
-            savedChannel.setThumbnailLink(channelSnippet.getThumbnails().getHigh().getUrl());
+            savedChannel.setThumbnailLink(channelSnippet.getThumbnails().getMedium().getUrl());
             savedChannelModified = true;
         }
         if (!channelSnippet.getTitle().equals(savedChannel.getName())) {
