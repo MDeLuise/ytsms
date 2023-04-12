@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavigateFunction, useNavigate, useSearchParams } from "react-router-dom";
 import Video from "./Video";
 import "../style/Home.scss";
@@ -15,6 +15,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     const [totalPages, setTotalPages] = useState<number>(1);
     const [searchParams, setSearchParams] = useSearchParams();
     const [channels, setChannels] = useState<string[]>([]);
+    const windowSize = useRef([window.innerWidth, window.innerHeight]);
 
     const fetchAllVideo = (pageNum: number) => {
         props.requestor.get(`video?sortBy=publishedAt&sortDir=DESC&pageSize=25&pageNo=${pageNum}`, {})
@@ -90,6 +91,16 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     };
 
 
+    const getPageRangeDisplayed = (): number => {
+        return windowSize.current[0] > 400 ? 3 : 1;
+    };
+
+
+    const getMarginPagesDisplayed = (): number => {
+        return windowSize.current[0] > 400 ? 3 : 1;
+    };
+
+
     useEffect(() => {
         if (!props.isLoggedIn()) {
             navigate("/auth");
@@ -132,7 +143,8 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                         left: 0
                     })
                 }}
-                pageRangeDisplayed={5}
+                pageRangeDisplayed={getPageRangeDisplayed()}
+                marginPagesDisplayed={getMarginPagesDisplayed()}
                 pageCount={totalPages}
                 previousLabel="<"
                 initialPage={currentPage}

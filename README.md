@@ -45,6 +45,13 @@ This images can be use indipendently, or they can be use in a `docker-compose` f
 One example of working docker-compose is provided at `deployment/docker-compose.yml`, it can be use running `docker-compose -f deployment/docker-compose.yml up -d` from the project root.
 In this case, the frontend of the system will be available at `http:localhosto:8080`, while the backend will be available at `http://localhost:8080/api`.
 
+# Fetching mode
+The service offers two video retrieval options:
+* `scraping`: videos are retrieved without the need of a YouTube API, although there are [some restrictions](#FAQ)
+* `official YouTube api`: video are retrieved using a YouTube key, which means [more metadata can be fetched but less anonymization](#FAQ) 
+
+In order to choose between one of the retrieval option the `YOUTUBE_KEY` property in the [configuration file](#Configuration) must be filled or left empty. 
+ 
 # Configuration
 There are 2 configuration file available:
 * `deployment/backend.env`: file containing the configuration for the backend. An example of content is the following:
