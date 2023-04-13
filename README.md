@@ -18,19 +18,19 @@ In order to make the service works the following are needed.
 ## Snapshot version
 If you want to use the snapshot version (i.e. simply use the service from the `main` branch):
 * [JDK 19+](https://openjdk.org/)
-* [MySQL](https://www.mysql.com/)
+* [MySQL](https://www.mysql.com/) (required for the production environment)
 * [React](https://reactjs.org/)
 
 ### Release version
-If you want to use the release version (i.e. simply use the service from one of the `release-X` branches):
+If you want to use the release version (i.e. simply use the service from one of the `vX.X.X` tags):
 * [Docker](https://www.docker.com/)
 
 # How to run
 
 ### Snapshot version
-* Be sure to have the `mysql` database up and running
+* If you want to use the produciton environment, be sure to have the `mysql` database up and running
 * Run the following command in the terminal inside the `backend` folder
-  `./mvnw spring-boot:run`
+  `./mvnw spring-boot:run`, or if don't want to use the production environment (i.e you prefer to use the embedded H2 database) you can append `-Dspring-boot.run.profiles=dev` to the command
 * Run the following command in the terminal inside the `frontend` folder
   `npm start`
 
@@ -43,39 +43,41 @@ In order to use the relase version of the service, 2 docker images are provided:
 
 This images can be use indipendently, or they can be use in a `docker-compose` file.
 One example of working docker-compose is provided at `deployment/docker-compose.yml`, it can be use running `docker-compose -f deployment/docker-compose.yml up -d` from the project root.
-In this case, the frontend of the system will be available at `http:localhosto:8080`, while the backend will be available at `http://localhost:8080/api`.
+In this case, the frontend of the system will be available at `http:localhosto:8080`, and the backend will be available at `http://localhost:8080/api`.
 
 # Fetching mode
 The service offers two video retrieval options:
-* `scraping`: videos are retrieved without the need of a YouTube API, although there are [some restrictions](#FAQ)
-* `official YouTube api`: video are retrieved using a YouTube key, which means [more metadata can be fetched but less anonymization](#FAQ) 
+* `scraping`: videos are retrieved without the need of a YouTube API key, although there are [some restrictions](#FAQ)
+* `official YouTube api`: video are retrieved using a YouTube API key, which means [more metadata can be fetched but less anonymization is provided](#FAQ) 
 
-In order to choose between one of the retrieval option the `YOUTUBE_KEY` property in the [configuration file](#Configuration) must be filled or left empty. 
+In order to choose between one of the retrieval option, the `YOUTUBE_KEY` property in the [configuration file](#Configuration) must be filled or left empty. 
  
 # Configuration
 There are 2 configuration file available:
 * `deployment/backend.env`: file containing the configuration for the backend. An example of content is the following:
-```
-MYSQL_HOST=db
-MYSQL_PORT=3306
-MYSQL_USERNAME=root
-MYSQL_PSW=root
-JWT_SECRET=putTheSecretHere
-JWT_EXP=1
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DATABASE=bootdb
-USERS_LIMIT=-1 # including the admin account, so <= 0 if undefined, >= 2 if defined
-YOUTUBE_KEY=
-VIDEO_REFRESH=* * 1 * * *
-```
-Change the properties values according to your system.
+  ```
+  MYSQL_HOST=db
+  MYSQL_PORT=3306
+  MYSQL_USERNAME=root
+  MYSQL_PSW=root
+  JWT_SECRET=putTheSecretHere
+  JWT_EXP=1
+  MYSQL_ROOT_PASSWORD=root
+  MYSQL_DATABASE=bootdb
+  USERS_LIMIT=-1 # including the admin account, so <= 0 if undefined, >= 2 if defined
+  YOUTUBE_KEY=
+  VIDEO_REFRESH=0 0 * * * *
+  ```
+  Change the properties values according to your system.
 
 * `deployment/frontend.env`: file containing the configuration for the frontend. An example of content is the following:
-```
-REACT_APP_API_URL=http://localhost:8080/api
-BROWSER=none
-```
-Change the properties values according to your system.
+  ```
+  REACT_APP_API_URL=http://localhost:8080/api
+  BROWSER=none
+  REACT_APP_PAGE_SIZE=25
+  ```
+  Change the properties values according to your system.
+
 # Documentation
 After a successful [run](#how-to-run) of the system, the swagger UI will be available at `http://localhost:8085/api/swagger-ui/index.html`
 ![images/swagger.png](images/swagger.png)
@@ -92,11 +94,17 @@ After a successful [run](#how-to-run) of the system, the swagger UI will be avai
   The `official youtube api` mode offers the following advantages:
   * retrieve the video duration
   * retrieve the channels image thumbnails
+  * retrieve more old video
   
   The `scraping` mode offers the following advantages:
-  * no need to use any youtube api key
-  * no quota restrictions (imposed by [youtube](https://developers.google.com/youtube/v3/getting-started#quota))
+  * no need to use any YouTube API key
+  * no [quota restrictions](https://developers.google.com/youtube/v3/getting-started#quota)
   * increased anonymization
+
+* How can I create a YouTube API key?
+
+  You can create a key following the [official guide](https://developers.google.com/youtube/v3/getting-started).
+
 # Contributing
 Fell free to contribute! Just a few useful information below.
 

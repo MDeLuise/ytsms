@@ -3,9 +3,20 @@ import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Subscription from "./Subscription";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
+import UploadOutlinedIcon from '@mui/icons-material/UploadOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import "../style/Settings.scss";
 
-export default function Settings(props: { isLoggedIn: () => boolean, requestor: AxiosInstance }) {
+export default function Settings(props: { isLoggedIn: () => boolean, requestor: AxiosInstance, colorMode: any }) {
     let navigate: NavigateFunction = useNavigate();
     const [subscriptionComponents, setSubscriptionComponents] = useState<any[]>([]);
     const [subscriptions, setSubscriptions] = useState<any[]>([]);
@@ -24,14 +35,13 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                             channelId={sub.channelId}
                             requestor={props.requestor}
                             id={sub.id} />
-                    )
+                    );
                 });
                 setSubscriptionComponents(subscriptions);
                 setSubscriptions(response.data);
             })
             .catch();
     };
-
 
     const addSubscription = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -46,25 +56,21 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
             })
     };
 
-
-    const changeBackend = (event: React.SyntheticEvent) => {
-        event.preventDefault();
-        localStorage.setItem("backend", backend);
+    const changeBackend = (backendValue: string) => {
+        setBackend(backendValue);
+        localStorage.setItem("backend", backendValue);
         if (backend === "invidious") {
             localStorage.setItem("invidiousInstance", invidiousInstance);
         }
     };
 
-
     const getBackendFromPreferences = (): string => {
         return localStorage.getItem("backend") != null ? localStorage.getItem("backend")! : "youtube";
     };
 
-
     const setInvidiousInstanceString = () => {
         setInvidiousInstance(localStorage.getItem("invidiousInstance") != null ? localStorage.getItem("invidiousInstance")! : "");
     };
-
 
     const exportSubscription = () => {
         let subscriptionExportText = "";
@@ -82,7 +88,6 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
 
         document.body.removeChild(element);
     };
-
 
     const importSubscription = (files: FileList | null) => {
         if (files != null) {
@@ -105,9 +110,7 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
             fileReader.readAsText(file);
             getAllSubscription();
         }
-
     };
-
 
     useEffect(() => {
         if (!props.isLoggedIn()) {
@@ -120,41 +123,58 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
 
     return (
         <>
-            <Navbar />
+            <Navbar colorMode={props.colorMode} />
             <div id="settings">
                 <h3 className="section">Subscription</h3>
-                <label htmlFor="import-from-file" style={{ color: "var(--color)" }}>Import from file</label>
-                <input type="file" id="import-from-file-hidden"
-                    onChange={(e) => importSubscription(e.target.files)}
-                    accept=".txt"
-                    style={{"display": "none"}}/>
-                <input type="button" id="import-from-file" value={"Browse"} onClick={() => document.getElementById('import-from-file-hidden')!.click()}/>
-                <form onSubmit={addSubscription}>
+
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                    <Button
+                        variant="contained"
+                        component="label"
+                        startIcon={<UploadOutlinedIcon />}>
+                        Import
+                        <input hidden accept=".txt" multiple type="file" onChange={(e) => importSubscription(e.target.files)} />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        component="label"
+                        startIcon={<DownloadOutlinedIcon />}
+                        disabled={subscriptions.length == 0}
+                        onClick={exportSubscription}>
+                        Export
+                    </Button>
+                </ButtonGroup>
+
+                <form onSubmit={addSubscription} style={{ display: 'flex', alignItems: 'center', flexWrap: "wrap" }}>
                     <label style={{ color: "var(--color)" }} htmlFor="add-subscription">Add subscription</label>
-                    <input id="add-subscription" type="text" placeholder="Channel ID" onChange={(e) => setChannelId(e.target.value)} />
-                    <button type="submit">Subscribe</button>
+                    <TextField id="add-subscription" label="Channel ID" variant="outlined" onChange={(e) => setChannelId(e.target.value)} />
+                    <Button variant="contained" component="label" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={addSubscription}>
+                        Subscribe
+                    </Button>
                 </form>
                 <div id="subscription-wrapper">{subscriptionComponents}</div>
-                <button onClick={exportSubscription}>Export</button>
-
 
                 <h3 className="section">Backend</h3>
-                <form onSubmit={changeBackend} id="backend-form">
-                    <div>
-                        <input type="radio" name="backend" id="youtube" value="youtube" checked={backend == "youtube"}
-                            onChange={(e) => setBackend(e.currentTarget.value)} />
-                        <label htmlFor="youtube" style={{ color: "var(--color)" }}>Youtube</label>
-                    </div>
-                    <div>
-                        <input type="radio" name="backend" id="invidious" value="invidious"
-                            onChange={(e) => setBackend(e.currentTarget.value)} checked={backend == "invidious"} />
-                        <label htmlFor="invidious" style={{ color: "var(--color)" }} id="invidious-label">Indivious</label>
-                        <input type="text" placeholder="Instance URL" disabled={backend != "invidious"}
-                            onChange={(e) => setInvidiousInstance(e.currentTarget.value)} value={invidiousInstance} />
-                    </div>
-                    <button type="submit">Change</button>
-                </form>
+
+                <FormControl sx={{ width: "100%" }}>
+                    <FormLabel id="demo-radio-buttons-group-label">Service</FormLabel>
+                    <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        defaultValue="female"
+                        name="radio-buttons-group"
+                    >
+                        <FormControlLabel value="youtube" control={<Radio />} label="YouTube" checked={backend == "youtube"} onChange={(e) => changeBackend((e.currentTarget as HTMLInputElement).value)} />
+                        <FormControlLabel value="invidious" control={<Radio />} label="Invidious" checked={backend == "invidious"} onChange={(e) => changeBackend((e.currentTarget as HTMLInputElement).value)} />
+                    </RadioGroup>
+                </FormControl>
+                <TextField
+                    id="outlined-basic"
+                    label="Invidious instance URL"
+                    variant="outlined"
+                    disabled={backend != "invidious"}
+                    value={invidiousInstance}
+                    sx={{ marginTop: "20px" }} />
             </div>
         </>
-    )
+    );
 }

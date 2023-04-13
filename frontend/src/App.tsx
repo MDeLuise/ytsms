@@ -6,16 +6,20 @@ import Home from "./components/Home";
 import axios from "axios";
 import Settings from "./components/Settings";
 import secureLocalStorage from "react-secure-storage";
+import React from "react";
+import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
 
+const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
-export default function App() {
+export function App() {
+  const colorMode = React.useContext(ColorModeContext);
   const isLoggedIn = () => secureLocalStorage.getItem("ytsms-key") !== null;
   const backendURL = process.env.REACT_APP_API_URL != null ? process.env.REACT_APP_API_URL : "http://localhost:8085/api";
   const axiosReq = axios.create({
     baseURL: backendURL,
     timeout: 1000
   });
-
+  
   axiosReq.interceptors.request.use(
     (req) => {
       if (!req.url?.startsWith("authentication") && !req.url?.startsWith("api-key")) {
@@ -28,17 +32,62 @@ export default function App() {
     }
   );
 
-  if (localStorage.getItem("dark") != "false") {
-    document.body.classList.add('dark');
-  }
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/:channels?" element={<Home requestor={axiosReq} isLoggedIn={isLoggedIn} />} />
+        <Route path="/:channels?" element={<Home requestor={axiosReq} isLoggedIn={isLoggedIn} colorMode={colorMode}/>} />
         <Route path="/auth" element={<Auth requestor={axiosReq} />} />
-        <Route path="/settings" element={<Settings requestor={axiosReq} isLoggedIn={isLoggedIn} />} />
+        <Route path="/settings" element={<Settings requestor={axiosReq} isLoggedIn={isLoggedIn} colorMode={colorMode}/>} />
       </Routes>
     </BrowserRouter>
+  );
+}
+
+
+export default function AppWithColorMode() {
+  const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    [],
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+          ...(mode === 'light'
+            ? {
+                // palette values for light mode
+                primary: {
+                  main: '#3f51b5',
+                },
+                secondary: {
+                  main: '#f50057',
+                },
+              }
+            : {
+                // palette values for dark mode
+                primary: {
+                  main: '#3f51b5',
+                },
+                secondary: {
+                  main: '#f50057',
+                },
+              }),
+        }}),
+    [mode],
+  );
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <App></App>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }

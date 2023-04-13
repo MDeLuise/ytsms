@@ -1,6 +1,15 @@
 import "../style/Video.scss";
 
-export default function Video(props: { title: string, channelName: string, channelId: string, id: string, thumbnailLink: string, view: Number, publishedAt: string, duration: number | null }) {
+export default function Video(props: {
+    title: string,
+    channelName: string,
+    channelId: string,
+    id: string,
+    thumbnailLink: string,
+    view: Number,
+    publishedAt: string,
+    duration: number | null
+}) {
     const timeSince = (date: Date): string => {
         var seconds = Math.floor(((new Date()).valueOf() - date.valueOf()) / 1000);
         var interval = seconds / 31536000;
@@ -24,8 +33,7 @@ export default function Video(props: { title: string, channelName: string, chann
             return Math.floor(interval) + " minutes";
         }
         return Math.floor(seconds) + " seconds";
-    }
-
+    };
 
     const formatDuration = (duration: number): string => {
         let hours: number = Math.floor(duration / 3600);
@@ -43,8 +51,7 @@ export default function Video(props: { title: string, channelName: string, chann
             formatted += `${seconds}s`;
         }
         return formatted;
-    }
-
+    };
 
     const createLink = (videoId: string) => {
         switch (localStorage.getItem("backend")) {
@@ -71,7 +78,6 @@ export default function Video(props: { title: string, channelName: string, chann
                 </a>
                 <p className="published-at">{timeSince(new Date(props.publishedAt))} ago</p>
             </div>
-
         </div>
     );
 }
