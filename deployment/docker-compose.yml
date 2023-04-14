@@ -6,7 +6,7 @@ services:
 #    build:
 #      context: ../
 #      dockerfile: deployment/Dockerfile
-    image: msdeluise/ytsms-backend:1.1.0
+    image: msdeluise/ytsms-backend:1.2.0
     #ports:
     #  - "8080:8080/tcp"
     env_file: backend.env
@@ -24,7 +24,7 @@ services:
     # build:
     #  content: ../frontend/
     #  dockerfile: deployment/Dockerfile
-    image: msdeluise/ytsms-frontend:1.1.0
+    image: msdeluise/ytsms-frontend:1.2.0
     env_file: frontend.env
     links:
       - backend
