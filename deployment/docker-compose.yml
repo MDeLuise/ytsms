@@ -2,13 +2,7 @@ version: "3"
 
 services:
   backend:
-#    container_name: ytsms-backend
-#    build:
-#      context: ../
-#      dockerfile: deployment/Dockerfile
     image: msdeluise/ytsms-backend:1.2.0
-    #ports:
-    #  - "8080:8080/tcp"
     env_file: backend.env
     depends_on:
       - db
@@ -20,10 +14,6 @@ services:
     env_file: backend.env
 
   frontend:
-    # container-name: ytsms-frontend
-    # build:
-    #  content: ../frontend/
-    #  dockerfile: deployment/Dockerfile
     image: msdeluise/ytsms-frontend:1.2.0
     env_file: frontend.env
     links:

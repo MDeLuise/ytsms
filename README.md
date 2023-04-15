@@ -10,7 +10,7 @@ Desktop view                              | Mobile view
 Youtube Subscription Management Service is a very creatively named service that offers the ability to manage YouTube channel subscriptions without the need for a Google account.
 
 # Why ytsms?
-Ytsms can be used to subscribe to a YouTube channel without setting up a Google account. It maintains track of every new video that is uploaded by the channels that are followed, and clicking on the video thumbnails plays the selected video in YouTube or in a Invidious instance.
+Ytsms can be used to subscribe to a YouTube channel without setting up a Google account. It maintains track of every new video that is uploaded by the channels that are followed, and clicking on the video thumbnails plays the selected video in YouTube or in a [Invidious](https://invidious.io/) instance.
 
 # Prerequisite
 In order to make the service works the following are needed.
@@ -44,6 +44,40 @@ In order to use the relase version of the service, 2 docker images are provided:
 This images can be use indipendently, or they can be use in a `docker-compose` file.
 One example of working docker-compose is provided at `deployment/docker-compose.yml`, it can be use running `docker-compose -f deployment/docker-compose.yml up -d` from the project root.
 In this case, the frontend of the system will be available at `http:localhosto:8080`, and the backend will be available at `http://localhost:8080/api`.
+
+For the sake of simplicity, the provided `docker-compose.yml` file is reported here (with replaced docker images tags with `latest`):
+```
+version: "3"
+
+services:
+  backend:
+    image: msdeluise/ytsms-backend:latest
+    env_file: backend.env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    restart: always
+    env_file: backend.env
+
+  frontend:
+    image: msdeluise/ytsms-frontend:latest
+    env_file: frontend.env
+    links:
+      - backend
+
+  reverse-proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - backend
+      - frontend
+``` 
 
 # Fetching mode
 The service offers two video retrieval options:
