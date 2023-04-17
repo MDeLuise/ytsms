@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "../style/Video.scss";
 
 export default function Video(props: {
@@ -10,6 +11,8 @@ export default function Video(props: {
     publishedAt: string,
     duration: number | null
 }) {
+    const [darkMode, _setDarkMode] = useState<boolean>(localStorage.getItem("ytsms-dark") != "false");
+
     const timeSince = (date: Date): string => {
         var seconds = Math.floor(((new Date()).valueOf() - date.valueOf()) / 1000);
         var interval = seconds / 31536000;
@@ -68,7 +71,10 @@ export default function Video(props: {
             <a href={createLink(props.id)} target="_blank">
                 <div>
                     <img className="thumbnail" src={props.thumbnailLink} />
-                    {props.duration && <p className="duration">{formatDuration(props.duration)}</p>}
+                    {
+                        props.duration &&
+                        <p className="duration" style={{ color: darkMode ? "inherit" : "white" }}>{formatDuration(props.duration)}</p>
+                    }
                 </div>
                 <h6 className="title">{props.title}</h6>
             </a>

@@ -22,6 +22,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import secureLocalStorage from 'react-secure-storage';
 
 const drawerWidth = 240;
 
@@ -83,16 +84,16 @@ export default function MobileNavbar(props: {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     let navigate: NavigateFunction = useNavigate();
-    const [darkMode, setDarkMode] = React.useState<boolean>(localStorage.getItem("dark") == "true" || localStorage.getItem("dark") == null);
+    const [darkMode, setDarkMode] = React.useState<boolean>(localStorage.getItem("dark") != "false");
 
     const toggleDarkMode = () => {
-        localStorage.setItem("dark", (!darkMode).toString());
+        localStorage.setItem("ytsms-dark", (!darkMode).toString());
         setDarkMode(!darkMode);
         props.colorMode.toggleColorMode();
     };
 
     const logOut = () => {
-        localStorage.removeItem("key");
+        secureLocalStorage.removeItem("ytsms-key");
         navigate("/auth");
     };
 

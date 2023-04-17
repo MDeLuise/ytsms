@@ -61,9 +61,12 @@ public class SubscriptionController {
     }
 
 
-    @Operation(summary = "Create a new Subscription", description = "Create a new Subscription.")
+    @Operation(
+        summary = "Create a new Subscription",
+        description = "Create a new Subscription."
+    )
     @PostMapping
-    public ResponseEntity<SubscriptionDTO> save(@RequestBody SubscriptionDTO entityToSave) {
+    public ResponseEntity<SubscriptionDTO> saveWithId(@RequestBody SubscriptionDTO entityToSave) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User authenticatedUser = userService.get(authentication.getName());
         entityToSave.setUserId(authenticatedUser.getId());

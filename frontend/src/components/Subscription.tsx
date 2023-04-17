@@ -25,7 +25,7 @@ export default function Subscription(props: {
             label={props.channelName ? props.channelName : props.channelId}
             onDelete={removeSubscription}
             deleteIcon={<DeleteIcon />}
-            icon={props.channelName ? undefined : <CircularProgress />}
+            icon={props.channelName ? undefined : <CircularProgress size={"20px"}/>}
             variant="outlined"
             hidden={removed}
         />

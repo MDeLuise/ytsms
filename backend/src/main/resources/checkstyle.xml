@@ -208,7 +208,7 @@
         <!-- NAMING CONVENTION -->
         <module name="AbbreviationAsWordInName">
             <property name="allowedAbbreviationLength" value="1"/>
-            <property name="allowedAbbreviations" value="XML,URL,API,CSV,DTO"/>
+            <property name="allowedAbbreviations" value="XML,URL,API,CSV,DTO,ID"/>
         </module>
 
         <module name="AbstractClassName"/>

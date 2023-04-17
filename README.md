@@ -139,6 +139,10 @@ After a successful [run](#how-to-run) of the system, the swagger UI will be avai
 
   You can create a key following the [official guide](https://developers.google.com/youtube/v3/getting-started).
 
+* Why sometime the `Channel Name` method for adding a subscription does not works?
+
+  This is a pretty known problem ([1](https://stackoverflow.com/questions/71062188/youtube-listchannels-with-usernameforusername-is-not-working), [2](https://stackoverflow.com/questions/35051882/youtube-api-v3-channels-list-method-doesnt-work-for-some-channels-names), [3](https://stackoverflow.com/questions/39378768/youtube-api-3-channels-by-username-and-id-inconsistant), [4](https://stackoverflow.com/questions/64299967/how-to-find-the-forusername-parameter-for-a-specific-channel)). It's caused by the inconsistence of some YouTube channel's `custom URL` and `username` parameters.
+
 # Contributing
 Fell free to contribute! Just a few useful information below.
 

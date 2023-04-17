@@ -16,7 +16,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     const [videoRes, setVideoRes] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, _setSearchParams] = useSearchParams();
     const [channels, setChannels] = useState<{}[]>([]);
     const pageSize = process.env.REACT_APP_PAGE_SIZE != null ? process.env.REACT_APP_PAGE_SIZE : 25;
     const windowSize = useRef([window.innerWidth, window.innerHeight]);
@@ -102,15 +102,11 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
     };
 
     const getPageRangeDisplayed = (): number => {
-        return windowSize.current[0] > 760 ? 1 : 0;
-    };
-
-    const getMarginPagesDisplayed = (): number => {
         return windowSize.current[0] > 760 ? 1 : 1;
     };
 
-    const getPagingSize = (): "small" | "medium" => {
-        return windowSize.current[0] > 760 ? "medium" : "small";
+    const getMarginPagesDisplayed = (): number => {
+        return windowSize.current[0] > 760 ? 2 : 1;
     };
 
     useEffect(() => {
@@ -137,8 +133,8 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
             <div id="video-wrapper">{videoRes}</div>
             {
                 channels.length == 0 ?
-                    <Typography variant="body1" gutterBottom sx={{display: "flex", justifyContent: "center", margin: "auto"}}>
-                        You have no subscription :(<br/>Go to the settings to add following channels.
+                    <Typography variant="body1" gutterBottom sx={{ display: "flex", justifyContent: "center", margin: "auto" }}>
+                        You have no subscription :(<br />Go to the settings to add following channels.
                     </Typography> :
                     <Pagination
                         count={totalPages}
@@ -150,7 +146,6 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             />
                         )}
                         color="primary"
-                        size={getPagingSize()}
                         siblingCount={getPageRangeDisplayed()}
                         boundaryCount={getMarginPagesDisplayed()}
                         onChange={(_event, value) => {
@@ -158,8 +153,12 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             fetchVideo(value - 1)
                             setCurrentPage(value - 1);
                         }}
-                        style={{
-                            margin: "50px 0"
+                        sx={{
+                            margin: "50px 0",
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: "40px",
+                            marginTop: "50px"
                         }}
                     />
             }

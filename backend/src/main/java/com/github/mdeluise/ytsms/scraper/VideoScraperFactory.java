@@ -9,21 +9,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VideoScraperFactory {
-    private final String youtubeApi;
+    private final String youTubeApi;
     private final VideoRssScraper videoRssScraper;
     private final VideoApiScraper videoApiScraper;
 
 
     @Autowired
-    public VideoScraperFactory(@Value("${youtube.key}") String youtubeApi, VideoRssScraper videoRssScraper,
+    public VideoScraperFactory(@Value("${youtube.key}") String youTubeApi, VideoRssScraper videoRssScraper,
                                VideoApiScraper videoApiScraper) {
-        this.youtubeApi = youtubeApi;
+        this.youTubeApi = youTubeApi;
         this.videoRssScraper = videoRssScraper;
         this.videoApiScraper = videoApiScraper;
     }
 
 
     public VideoScraper getVideoScraper() {
-        return Strings.isNullOrEmpty(youtubeApi) ? videoRssScraper : videoApiScraper;
+        return Strings.isNullOrEmpty(youTubeApi) ? videoRssScraper : videoApiScraper;
     }
 }

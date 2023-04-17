@@ -34,10 +34,6 @@ public class VideoApiExtractorImpl implements VideoApiExtractor {
     private final VideoService videoService;
 
 
-    private record ChannelAndUploadUrl(com.github.mdeluise.ytsms.channel.Channel channel, String uploadUrl) {
-    }
-
-
     public VideoApiExtractorImpl(@Value("${youtube.key}") String youtubeApiKey, ChannelService channelService,
                                  VideoService videoService) throws GeneralSecurityException, IOException {
         this.youtubeApiKey = youtubeApiKey;

@@ -1,5 +1,7 @@
 package com.github.mdeluise.ytsms;
 
+import com.github.mdeluise.ytsms.scraper.InfoExtractor;
+import com.github.mdeluise.ytsms.scraper.InfoExtractorFactory;
 import com.github.mdeluise.ytsms.scraper.VideoScraper;
 import com.github.mdeluise.ytsms.scraper.VideoScraperFactory;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -40,6 +42,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 public class ApplicationConfig {
     @Autowired
     VideoScraperFactory videoScraperFactory;
+    @Autowired
+    InfoExtractorFactory infoExtractorFactory;
 
 
     @Bean
@@ -51,6 +55,12 @@ public class ApplicationConfig {
     @Bean
     public VideoScraper videoScraper() {
         return videoScraperFactory.getVideoScraper();
+    }
+
+
+    @Bean
+    public InfoExtractor infoExtractor() {
+        return infoExtractorFactory.getInfoExtractor();
     }
 
 

@@ -21,6 +21,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ChannelAvatar from './ChannelAvatar';
+import secureLocalStorage from 'react-secure-storage';
 
 const drawerWidth = 240;
 
@@ -102,16 +103,16 @@ export default function DesktopNavbar(props: {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     let navigate: NavigateFunction = useNavigate();
-    const [darkMode, setDarkMode] = React.useState<boolean>(localStorage.getItem("dark") == "true" || localStorage.getItem("dark") == null);
+    const [darkMode, setDarkMode] = React.useState<boolean>(localStorage.getItem("ytsms-dark") != "false");
 
     const toggleDarkMode = () => {
-        localStorage.setItem("dark", (!darkMode).toString());
+        localStorage.setItem("ytsms-dark", (!darkMode).toString());
         setDarkMode(!darkMode);
         props.colorMode.toggleColorMode();
     };
 
     const logOut = () => {
-        localStorage.removeItem("key");
+        secureLocalStorage.removeItem("ytsms-key");
         navigate("/auth");
     };
 

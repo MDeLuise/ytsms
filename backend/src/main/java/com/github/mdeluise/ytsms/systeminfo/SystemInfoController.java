@@ -1,5 +1,6 @@
 package com.github.mdeluise.ytsms.systeminfo;
 
+import com.google.common.base.Strings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Info", description = "Endpoints for system info")
 public class SystemInfoController {
     private final String version;
+    private final boolean youTubeApiFetchingModeEnabled;
 
 
-    public SystemInfoController(@Value("${app.version}") String version) {
+    public SystemInfoController(@Value("${app.version}") String version, @Value("${youtube.key}") String youtubeApiKey) {
         this.version = version;
+        this.youTubeApiFetchingModeEnabled = !Strings.isNullOrEmpty(youtubeApiKey);
     }
 
 
@@ -35,7 +38,17 @@ public class SystemInfoController {
         summary = "System version",
         description = "Get the version of the system."
     )
-    public ResponseEntity<String> version() {
+    public ResponseEntity<String> getVersion() {
         return ResponseEntity.ok(version);
+    }
+
+
+    @GetMapping("/scraping-mode")
+    @Operation(
+        summary = "Fetching mode",
+        description = "Return the used fetching mode."
+    )
+    public ResponseEntity<String> getFetchingMode() {
+        return ResponseEntity.ok(youTubeApiFetchingModeEnabled ? "YouTube_API" : "Scraping");
     }
 }

@@ -7,13 +7,13 @@ import axios from "axios";
 import Settings from "./components/Settings";
 import secureLocalStorage from "react-secure-storage";
 import React from "react";
-import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
 export function App() {
   const colorMode = React.useContext(ColorModeContext);
-  const isLoggedIn = () => secureLocalStorage.getItem("ytsms-key") !== null;
+  const isLoggedIn = () => secureLocalStorage.getItem("ytsms-key") != null;
   const backendURL = process.env.REACT_APP_API_URL != null ? process.env.REACT_APP_API_URL : "http://localhost:8085/api";
   const axiosReq = axios.create({
     baseURL: backendURL,
@@ -45,7 +45,7 @@ export function App() {
 
 
 export default function AppWithColorMode() {
-  const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
+  const [mode, setMode] = React.useState<'light' | 'dark'>(localStorage.getItem("ytsms-dark") != "false" ? "dark" : "light");
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {

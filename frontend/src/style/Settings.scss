@@ -1,6 +1,7 @@
 #settings {
     width: 90%;
     margin: 0 auto;
+    margin-bottom: 50px;
 
     .section {
         color: var(--text-accent-color);
@@ -18,26 +19,4 @@
             margin: 0 5px;
         }
     }
-
-    form {
-        padding: 20px 0;
-
-        & > * {
-            margin: 0 10px;
-        }
-
-        label {
-            margin-left: 10px;
-        }
-
-        #invidious-label {
-            margin-right: 10px;
-        }
-
-        &#backend-form button {
-            margin-top: 20px;
-        }
-    }
-
-    
 }
