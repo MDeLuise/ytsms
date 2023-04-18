@@ -16,6 +16,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import ButtonGroup from '@mui/material/ButtonGroup';
 import MenuItem from '@mui/material/MenuItem';
 import "../style/Settings.scss";
+import { Alert, Snackbar } from "@mui/material";
 
 export default function Settings(props: { isLoggedIn: () => boolean, requestor: AxiosInstance, colorMode: any }) {
     let navigate: NavigateFunction = useNavigate();
@@ -27,6 +28,9 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
     const [fetchingMode, setFetchingMode] = useState<"YouTube_API" | "Scraping">("Scraping");
     const [addSubscriptionMode, setAddSubscriptionMode] = useState<"Channel ID" | "Channel Name">("Channel ID");
     const [channelName, setChannelName] = useState<string>();
+    const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
+    const [snackBarMessage, setSnackBarMessage] = useState<string>();
+    const [snackBarSeverity, setSnackBarSeverity] = useState<"error" | "warning" | "info" | "success">("success");
 
     const getAllSubscription = () => {
         props.requestor.get("subscription", {})
@@ -62,27 +66,32 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
         props.requestor.post("subscription", payload)
             .then((_res) => {
                 getAllSubscription();
+                setSnackBarMessage("Subscription added successfully");
+                setSnackBarSeverity("success");
+                setSnackBarOpen(true);
             })
             .catch((error) => {
                 console.error(error);
+                setSnackBarMessage("Error while adding subscription");
+                setSnackBarSeverity("error");
+                setSnackBarOpen(true);
             })
-
     };
 
     const changeBackend = (backendValue: string) => {
         setBackend(backendValue);
-        localStorage.setItem("backend", backendValue);
+        localStorage.setItem("ytsms-backend", backendValue);
         if (backend === "invidious") {
-            localStorage.setItem("invidiousInstance", invidiousInstance);
+            localStorage.setItem("ytsms-invidiousInstance", invidiousInstance);
         }
     };
 
     const getBackendFromPreferences = (): string => {
-        return localStorage.getItem("backend") != null ? localStorage.getItem("backend")! : "youtube";
+        return localStorage.getItem("ytsms-backend") != null ? localStorage.getItem("ytsms-backend")! : "youtube";
     };
 
     const setInvidiousInstanceString = () => {
-        setInvidiousInstance(localStorage.getItem("invidiousInstance") != null ? localStorage.getItem("invidiousInstance")! : "");
+        setInvidiousInstance(localStorage.getItem("ytsms-invidiousInstance") != null ? localStorage.getItem("ytsms-invidiousInstance")! : "");
     };
 
     const exportSubscription = () => {
@@ -116,6 +125,9 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                         })
                             .catch((error) => {
                                 console.error(error);
+                                setSnackBarMessage("Error while importing subscription: " + importedChannelId);
+                                setSnackBarSeverity("error");
+                                setSnackBarOpen(true);
                             })
                     }
                 }
@@ -132,8 +144,19 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
             })
             .catch((error) => {
                 console.error(error);
+                setSnackBarMessage("Error while retrieving backend fetching mode");
+                setSnackBarSeverity("error");
+                setSnackBarOpen(true);
             })
-    }
+    };
+
+
+    const closeSnackBar = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackBarOpen(false);
+    };
 
     useEffect(() => {
         if (!props.isLoggedIn()) {
@@ -147,6 +170,16 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
 
     return (
         <>
+            <Snackbar
+                open={snackBarOpen}
+                autoHideDuration={6000}
+                onClose={closeSnackBar}
+            >
+                <Alert variant="filled" onClose={closeSnackBar} severity={snackBarSeverity} sx={{ width: '100%' }}>
+                    {snackBarMessage}
+                </Alert>
+            </Snackbar>
+
             <Navbar colorMode={props.colorMode} />
             <div id="settings">
                 <h3 className="section">Subscription</h3>
@@ -209,10 +242,10 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                 </form>
                 <p>All subscriptions ({subscriptions.length}):</p>
                 <div id="subscription-wrapper">{
-                subscriptionComponents.sort(
-                    ((sub1, sub2) => {
-                        return sub1.props.channelName.localeCompare(sub2.props.channelName);
-                    }))
+                    subscriptionComponents.sort(
+                        ((sub1, sub2) => {
+                            return sub1.props.channelName.localeCompare(sub2.props.channelName);
+                        }))
                 }</div>
 
                 <h3 className="section">Backend</h3>
@@ -235,7 +268,8 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                         variant="outlined"
                         disabled={backend != "invidious"}
                         value={invidiousInstance}
-                        sx={{ marginTop: "20px", maxWidth: "400px" }} />
+                        sx={{ marginTop: "20px", maxWidth: "400px" }}
+                        onChange={(e) => setInvidiousInstance(e.target.value)} />
                 </div>
             </div>
         </>
