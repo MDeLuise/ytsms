@@ -12,7 +12,7 @@ jobs:
           java-version: 19
 
       - name: Build
-        run: mvn verify -DskipTests -Dcheckstyle.skip
+        run: mvn clean install -DskipTests -Dcheckstyle.skip
         working-directory: ./backend
 
   checkstyle:
@@ -36,5 +36,5 @@ jobs:
           java-version: 19
 
       - name: Run the tests
-        run: mvn verify -Dcheckstyle.skip
+        run: mvn test
         working-directory: ./backend
