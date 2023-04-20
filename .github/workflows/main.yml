@@ -9,7 +9,7 @@ jobs:
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.2.1
         with:
-          java-version: 19
+          java-version: 20
 
       - name: Build
         run: mvn clean install -DskipTests -Dcheckstyle.skip
@@ -21,7 +21,7 @@ jobs:
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.2.1
         with:
-          java-version: 19
+          java-version: 20
 
       - name: Verify the checkstyle
         run: mvn checkstyle:check
@@ -33,7 +33,7 @@ jobs:
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.2.1
         with:
-          java-version: 19
+          java-version: 20
 
       - name: Run the tests
         run: mvn test

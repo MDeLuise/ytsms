@@ -9,12 +9,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.github.mdeluise</groupId>
-    <artifactId>rss-tube</artifactId>
+    <artifactId>ytsms</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>RSS Tube</name>
+    <name>YTSMS</name>
     <description>Youtube subscription manager</description>
     <properties>
-        <java.version>19</java.version>
+        <java.version>20</java.version>
     </properties>
     <dependencies>
         <dependency>

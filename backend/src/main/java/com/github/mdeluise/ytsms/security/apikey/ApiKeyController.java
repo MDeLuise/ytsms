@@ -30,8 +30,8 @@ public class ApiKeyController {
 
 
     @Autowired
-    public ApiKeyController(UserService userService, com.github.mdeluise.ytsms.security.apikey.ApiKeyService apiKeyService,
-                            com.github.mdeluise.ytsms.security.apikey.ApiKeyDTOConverter apiKeyDTOConverter) {
+    public ApiKeyController(UserService userService, ApiKeyService apiKeyService,
+                            ApiKeyDTOConverter apiKeyDTOConverter) {
         this.userService = userService;
         this.apiKeyService = apiKeyService;
         this.apiKeyDTOConverter = apiKeyDTOConverter;
@@ -40,8 +40,7 @@ public class ApiKeyController {
 
     @PostMapping("/")
     @Operation(
-        summary = "Create a new API Key",
-        description = "Create a new API Key."
+        summary = "Create a new API Key", description = "Create a new API Key."
     )
     public ResponseEntity<String> createNewApiKey(@RequestParam(required = false) String name) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,8 +53,7 @@ public class ApiKeyController {
 
     @DeleteMapping("/{id}")
     @Operation(
-        summary = "Delete an API Key",
-        description = "Delete an API Key."
+        summary = "Delete an API Key", description = "Delete an API Key."
     )
     public ResponseEntity<String> removeApiKey(@PathVariable("id") Long apiKeyId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -70,11 +68,11 @@ public class ApiKeyController {
     @Operation(
         summary = "Get all the API Key", description = "Get all the API Key."
     )
-    public ResponseEntity<Collection<com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO>> getAllApiKey() {
+    public ResponseEntity<Collection<ApiKeyDTO>> getAllApiKey() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.get(username);
-        List<com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO> result = apiKeyService.getAll(user).stream().map(apiKeyDTOConverter::convertToDTO).toList();
+        List<ApiKeyDTO> result = apiKeyService.getAll(user).stream().map(apiKeyDTOConverter::convertToDTO).toList();
         return ResponseEntity.ok().body(result);
     }
 
@@ -83,26 +81,25 @@ public class ApiKeyController {
     @Operation(
         summary = "Get a single API Key", description = "Get a single API Key, according to the `id` parameter."
     )
-    public ResponseEntity<com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO> getApiKey(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiKeyDTO> getApiKey(@PathVariable("id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.get(username);
-        com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO
-            result = apiKeyDTOConverter.convertToDTO(apiKeyService.get(user, id));
+        ApiKeyDTO result = apiKeyDTOConverter.convertToDTO(apiKeyService.get(user, id));
         return ResponseEntity.ok().body(result);
     }
 
 
     @GetMapping("/name/{name}")
     @Operation(
-        summary = "Get a single API Key by name", description = "Get a single API Key, according to the `name` parameter."
+        summary = "Get a single API Key by name",
+        description = "Get a single API Key, according to the `name` parameter."
     )
-    public ResponseEntity<com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO> getApiKeyByName(@PathVariable("name") String name) {
+    public ResponseEntity<ApiKeyDTO> getApiKeyByName(@PathVariable("name") String name) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.get(username);
-        com.github.mdeluise.ytsms.security.apikey.ApiKeyDTO
-            result = apiKeyDTOConverter.convertToDTO(apiKeyService.get(user, name));
+        ApiKeyDTO result = apiKeyDTOConverter.convertToDTO(apiKeyService.get(user, name));
         return ResponseEntity.ok().body(result);
     }
 }

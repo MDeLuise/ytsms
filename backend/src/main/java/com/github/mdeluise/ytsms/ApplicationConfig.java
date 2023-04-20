@@ -24,10 +24,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-        title = "Sub Feed REST API", version = "1.0",
-        description = "<h1>Introduction</h1>" + "<p>Sub Feed is a self-hosted, open " + "source, ...</p>",
+        title = "YTSMS REST API", version = "1.0",
+        description = "<h1>Introduction</h1>" + "<p>YTSMS is a self-hosted, open " + "source, ...</p>",
         license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0"),
-        contact = @Contact(name = "GitHub page", url = "https://github.com/MDeLuise/rss-tube")
+        contact = @Contact(name = "GitHub page", url = "https://github.com/MDeLuise/ytsms")
     ), security = {@SecurityRequirement(name = "bearerAuth")}, servers = {
     @Server(description = "Production", url = "http://localhost:8080/api"),
     @Server(description = "Developer", url = "http://localhost:8085/api")

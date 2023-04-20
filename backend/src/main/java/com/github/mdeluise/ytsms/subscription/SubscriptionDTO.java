@@ -14,7 +14,11 @@ public class SubscriptionDTO {
     private String channelName;
     @Schema(description = "User ID of the subscription.", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long userId;
-    @Schema(description = "Link of the subscription channel's thumbnail.", example = "TO_INSERT", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(
+        description = "Link of the subscription channel's thumbnail.",
+        example = "https://yt3.googleusercontent.com/7gH1GpiT0XGWatAc27MwqNH8PdUf1LC5zz3MS_n5yJ4MO9hoYXcS54ay5JlOfNAZNx8gdcEUig=s176-c-k-c0x00ffffff-no-rj",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
     private String channelThumbnailLink;
 
 

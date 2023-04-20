@@ -59,10 +59,7 @@ public class SubscriptionService {
 
     @Transactional
     public Subscription save(Subscription entityToSave) {
-        User authenticatedUser = getAuthenticatedUser();
-        if (!authenticatedUser.equals(entityToSave.getUser())) {
-            throw new UnauthorizedException();
-        }
+        entityToSave.setUser(getAuthenticatedUser());
         if (entityToSave.getChannel().getId() == null) {
             try {
                 String channelID = infoExtractor.getChannelIDFromUsername(entityToSave.getChannel().getName());

@@ -1,14 +1,10 @@
 package com.github.mdeluise.ytsms.subscription;
 
-import com.github.mdeluise.ytsms.authentication.User;
-import com.github.mdeluise.ytsms.authentication.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,19 +19,17 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/subscription")
-@Tag(name = "Subscription", description = "Endpoints for operations on notes.")
+@Tag(name = "Subscription", description = "Endpoints for operations on subscription.")
 public class SubscriptionController {
-    private final UserService userService;
     private final SubscriptionService subscriptionService;
     private final SubscriptionDTOConverter subscriptionDtoConverter;
 
 
     @Autowired
     public SubscriptionController(SubscriptionDTOConverter subscriptionDTOConverter,
-                                  SubscriptionService subscriptionService, UserService userService) {
+                                  SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
         this.subscriptionDtoConverter = subscriptionDTOConverter;
-        this.userService = userService;
     }
 
 
@@ -62,14 +56,10 @@ public class SubscriptionController {
 
 
     @Operation(
-        summary = "Create a new Subscription",
-        description = "Create a new Subscription."
+        summary = "Create a new Subscription", description = "Create a new Subscription."
     )
     @PostMapping
     public ResponseEntity<SubscriptionDTO> saveWithId(@RequestBody SubscriptionDTO entityToSave) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User authenticatedUser = userService.get(authentication.getName());
-        entityToSave.setUserId(authenticatedUser.getId());
         SubscriptionDTO result = subscriptionDtoConverter.convertToDTO(
             subscriptionService.save(subscriptionDtoConverter.convertFromDTO(entityToSave)));
         return ResponseEntity.ok(result);

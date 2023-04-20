@@ -9,7 +9,7 @@ import java.util.Objects;
 public class VideoDTO {
     @Schema(description = "ID of the video.", example = "6Rz2M7FmJBE")
     private String id;
-    @Schema(description = "Title of the video.", example = "Introduction to Sub Feed")
+    @Schema(description = "Title of the video.", example = "Introduction to YTSMS")
     private String title;
     @Schema(description = "Published date of the video.")
     private Date publishedAt;

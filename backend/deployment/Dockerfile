@@ -1,4 +1,4 @@
-FROM openjdk:19-jdk
+FROM openjdk:20-jdk
 
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
