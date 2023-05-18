@@ -15,20 +15,20 @@ Ytsms can be used to subscribe to a YouTube channel without setting up a Google 
 # Prerequisite
 In order to make the service works the following are needed.
 
-## Snapshot version
-If you want to use the snapshot version (i.e. simply use the service from the `main` branch):
+## Development version
+If you want to use the development version (i.e. use the service without the `docker images`):
 * [JDK 19+](https://openjdk.org/)
 * [MySQL](https://www.mysql.com/) (required for the production environment)
 * [React](https://reactjs.org/)
 
 ### Release version
-If you want to use the release version (i.e. simply use the service from one of the `vX.X.X` tags):
+If you want to use the release version (i.e. simply use the service with the `docker images`):
 * [Docker](https://www.docker.com/)
 
 # How to run
 
-### Snapshot version
-* If you want to use the produciton environment, be sure to have the `mysql` database up and running
+### Development version
+* If you want to use the production environment, be sure to have the `mysql` database up and running
 * Run the following command in the terminal inside the `backend` folder
   `./mvnw spring-boot:run`, or if don't want to use the production environment (i.e you prefer to use the embedded H2 database) you can append `-Dspring-boot.run.profiles=dev` to the command
 * Run the following command in the terminal inside the `frontend` folder
@@ -43,7 +43,7 @@ In order to use the relase version of the service, 2 docker images are provided:
 
 This images can be use indipendently, or they can be use in a `docker-compose` file.
 One example of working docker-compose is provided at `deployment/docker-compose.yml`, it can be use running `docker-compose -f deployment/docker-compose.yml up -d` from the project root.
-In this case, the frontend of the system will be available at `http:localhosto:8080`, and the backend will be available at `http://localhost:8080/api`.
+In this case, the frontend of the system will be available at `http:localhost:8080`, and the backend will be available at `http://localhost:8080/api`.
 
 For the sake of simplicity, the provided `docker-compose.yml` file is reported here (with replaced docker images tags with `latest`):
 ```
@@ -78,6 +78,8 @@ services:
       - backend
       - frontend
 ``` 
+
+Please notice that running the `docker-compose` file from another machine change the way to connect to the server. For example, if you run the `docker-compose` on the machine with the local IP `192.168.1.100` then you have to change the backend url in the `REACT_APP_API_URL` [variable](#Configuration) to `http://192.168.1.100:8080/api`. In this case, the frontend of the system will be available at `http:192.168.1.100:8080`, and the backend will be available at `http://192.168.1.100:8080/api`.
 
 # Fetching mode
 The service offers two video retrieval options:
