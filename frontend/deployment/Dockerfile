@@ -3,8 +3,7 @@ FROM node:alpine
 WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
-RUN yarn install
+RUN npm install
 COPY . .
-RUN yarn build
 
 ENTRYPOINT ["npm","start"]
