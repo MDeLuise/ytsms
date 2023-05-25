@@ -6,5 +6,6 @@
 
     <include file="/dblogs/changelog/changes/changelog-0.xml"/>
     <include file="/dblogs/changelog/changes/changelog-1.xml"/>
+    <include file="/dblogs/changelog/init-users.xml"/>
     <include file="/dblogs/changelog/init-dummy-data.xml"/>
 </databaseChangeLog>

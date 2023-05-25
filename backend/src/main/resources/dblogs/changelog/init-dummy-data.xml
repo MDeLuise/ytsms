@@ -17,7 +17,7 @@
         <insert tableName="subscriptions">
             <column name="id" value="99"/>
             <column name="channel_id" value="UCVThyXNYXDC9UhDbI8LtghQ"/>
-            <column name="user_id" value="0"/>
+            <column name="user_id" value="99"/>
         </insert>
     </changeSet>
 

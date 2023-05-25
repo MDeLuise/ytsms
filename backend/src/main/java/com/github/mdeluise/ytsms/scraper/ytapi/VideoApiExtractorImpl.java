@@ -114,25 +114,26 @@ public class VideoApiExtractorImpl implements VideoApiExtractor {
             uploadedUrls.add(uploadsUrl);
         }
 
-        String joinedUploadUrl = String.join(",", uploadedUrls);
-        YouTube.PlaylistItems.List videoUploadedRequest =
-            youTubeClient.playlistItems().list("snippet,contentDetails");
-        PlaylistItemListResponse videoUploadedResponse =
-            videoUploadedRequest.setPlaylistId(joinedUploadUrl).setMaxResults(50L).setKey(youtubeApiKey).execute();
         Collection<Video> newVideo = new HashSet<>();
-        for (PlaylistItem uploadedVideo : videoUploadedResponse.getItems()) {
-            if (videoService.exists(uploadedVideo.getId())) {
-                continue;
+        for (String uploadedUrl : uploadedUrls) {
+            YouTube.PlaylistItems.List videoUploadedRequest =
+                youTubeClient.playlistItems().list("snippet,contentDetails");
+            PlaylistItemListResponse videoUploadedResponse =
+                videoUploadedRequest.setPlaylistId(uploadedUrl).setMaxResults(50L).setKey(youtubeApiKey).execute();
+            for (PlaylistItem uploadedVideo : videoUploadedResponse.getItems()) {
+                if (videoService.exists(uploadedVideo.getId())) {
+                    continue;
+                }
+                PlaylistItemSnippet videoSnippet = uploadedVideo.getSnippet();
+                Video video = new Video();
+                video.setId(videoSnippet.getResourceId().getVideoId());
+                video.setTitle(videoSnippet.getTitle());
+                video.setChannel(channelService.get(videoSnippet.getChannelId()));
+                video.setPublishedAt(Date.from(Instant.parse(videoSnippet.getPublishedAt().toString())));
+                video.setThumbnailLink(videoSnippet.getThumbnails().getHigh().getUrl());
+                setViewCountAndDuration(video);
+                newVideo.add(video);
             }
-            PlaylistItemSnippet videoSnippet = uploadedVideo.getSnippet();
-            Video video = new Video();
-            video.setId(videoSnippet.getResourceId().getVideoId());
-            video.setTitle(videoSnippet.getTitle());
-            video.setChannel(channelService.get(videoSnippet.getChannelId()));
-            video.setPublishedAt(Date.from(Instant.parse(videoSnippet.getPublishedAt().toString())));
-            video.setThumbnailLink(videoSnippet.getThumbnails().getHigh().getUrl());
-            setViewCountAndDuration(video);
-            newVideo.add(video);
         }
         return newVideo;
     }
