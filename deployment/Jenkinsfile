@@ -1,5 +1,8 @@
 pipeline {
-    agent { docker { image 'maven:3.9.2-amazoncorretto-20-debian-bullseye' } }
+    agent { docker { 
+                image 'maven:3-eclipse-temurin-20'
+                args '-u root'
+          } }
     
     environment {
         DOCKER_ID = credentials('DOCKER_ID')
@@ -9,13 +12,18 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+                echo 'Log in....'
+                //sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+                sh 'mvn --version'
             }
         }
         stage('Build - Backend') {
             steps {
                 dir("backend") {
+                    echo 'Compiling...'
+                    sh 'echo "Test echo with sh"'
                     sh 'mvn clean install -DskipTests -Dcheckstyle.skip'
+                    echo 'Compiled'
                 }
             }
         }
@@ -43,7 +51,8 @@ pipeline {
         stage ('Build docker images - Backend') {
             steps {
                 dir ("backend/deployment") {
-                   sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
+                   echo 'Building...'
+                   //sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
                  }    
             }
         }
