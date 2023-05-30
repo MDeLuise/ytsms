@@ -1,0 +1,73 @@
+pipeline {
+    agent { docker { image 'maven:3.9.2-amazoncorretto-20-debian-bullseye' } }
+    
+    environment {
+        DOCKER_ID = credentials('DOCKER_ID')
+        DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+    }
+
+    stages {
+        stage('Init') {
+            steps {
+                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+            }
+        }
+        stage('Build - Backend') {
+            steps {
+                dir("backend") {
+                    sh 'mvn clean install -DskipTests -Dcheckstyle.skip'
+                }
+            }
+        }
+        stage ('Test - Backend') {
+            steps {
+                dir("backend") {
+                    sh 'mvn verify -Dcheckstyle.skip'     
+                }
+            }
+        }
+        stage ('Checkstyle - Backend') {
+            steps {
+                dir("backend") {
+                   sh 'mvn checkstyle:check'
+                }
+            }
+        }
+        stage ('Package - Backend') {
+            steps {
+                dir("backend") {
+                   sh 'mvn package -DskipTests -Dcheckstyle.skip'
+                }
+            }
+        }
+        stage ('Build docker images - Backend') {
+            steps {
+                dir ("backend/deployment") {
+                   sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
+                 }    
+            }
+        }
+
+        stage ('Publish docker image - Backend') {
+            steps {
+                dir ("backend/deployment") {
+                   echo 'Publish...'
+                }    
+            }
+        }
+
+        stage ('Cleanup docker image - Backend') {
+            steps {
+                dir ("backend/deployment") {
+                   echo 'Cleanup...'
+                   sh 'docker ps -aq | xargs --no-run-if-empty docker rm'
+                }    
+            }
+        }
+    }
+    post { 
+        always { 
+            sh 'mvn clean'
+        }
+    }
+}
