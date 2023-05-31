@@ -73,12 +73,7 @@ pipeline {
             }
         }
         stage('Build and publish docker image of backend') {
-            agent {
-                    docker {
-	                    image "docker:dind"
-                            args "-u root"
- 		    }
-            }
+            agent none
             stages {
                 stage('Login') {
                     steps {
@@ -103,6 +98,7 @@ pipeline {
             dir("backend") {
                 sh 'mvn clean'
                 sh 'docker images -q | xargs --no-run-if-empty docker rmi'
+		sh 'docker logout'
             }
         }
     }
