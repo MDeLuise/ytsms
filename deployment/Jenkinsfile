@@ -12,24 +12,22 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                echo 'Log in....'
+                echo 'Loggin in...'
                 //sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
-                sh 'mvn --version'
             }
         }
         stage('Build - Backend') {
             steps {
                 dir("backend") {
                     echo 'Compiling...'
-                    sh 'echo "Test echo with sh"'
                     sh 'mvn clean install -DskipTests -Dcheckstyle.skip'
-                    echo 'Compiled'
                 }
             }
         }
         stage ('Test - Backend') {
             steps {
                 dir("backend") {
+                    echo 'Testing...'
                     sh 'mvn verify -Dcheckstyle.skip'     
                 }
             }
@@ -37,6 +35,7 @@ pipeline {
         stage ('Checkstyle - Backend') {
             steps {
                 dir("backend") {
+                   echo 'Checkstyle...'
                    sh 'mvn checkstyle:check'
                 }
             }
@@ -44,6 +43,7 @@ pipeline {
         stage ('Package - Backend') {
             steps {
                 dir("backend") {
+                   echo 'Creating package...'
                    sh 'mvn package -DskipTests -Dcheckstyle.skip'
                 }
             }
@@ -75,8 +75,10 @@ pipeline {
         }
     }
     post { 
-        always { 
-            sh 'mvn clean'
+        always {
+            dir("backend") {
+             sh 'mvn clean'
+            }
         }
     }
 }
