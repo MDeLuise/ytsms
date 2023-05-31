@@ -73,7 +73,7 @@ pipeline {
             }
         }
         stage('Build and publish docker image of backend') {
-            agent none
+            agent any
             stages {
                 stage('Login') {
                     steps {
