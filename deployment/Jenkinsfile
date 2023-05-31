@@ -1,8 +1,5 @@
 pipeline {
-    agent { docker { 
-                image 'maven:3-eclipse-temurin-20'
-                args '-u root'
-          } }
+    agent none
     
     environment {
         DOCKER_ID = credentials('DOCKER_ID')
@@ -10,74 +7,102 @@ pipeline {
     }
 
     stages {
-        stage('Init') {
-            steps {
-                echo 'Loggin in...'
-                //sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+        stage('Build and test the backend') {
+            agent {
+                    docker {
+	                    image "maven:3-eclipse-temurin-20"
+                            args "-u root"
+ 		    }
             }
-        }
-        stage('Build - Backend') {
-            steps {
-                dir("backend") {
-                    echo 'Compiling...'
-                    sh 'mvn clean install -DskipTests -Dcheckstyle.skip'
+            stages {
+                stage('Build') {
+                    steps {
+                        dir("backend") {
+                            echo 'Compiling...'
+                            sh 'mvn clean install -DskipTests -Dcheckstyle.skip'
+                        }
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        dir("backend") {
+                            echo 'Testing...'
+                            sh 'mvn verify -Dcheckstyle.skip'     
+                        }
+                    }
+                }
+                stage('Checkstyle ') {
+                    steps {
+                        dir("backend") {
+                            echo 'Checkstyle...'
+                            sh 'mvn checkstyle:check'
+                        }
+                    }
+                }
+                stage('Package') {
+                    steps {
+                        dir("backend") {
+                            echo 'Packaging...'
+                            sh 'mvn package -DskipTests -Dcheckstyle.skip'
+                        }
+                    }
+                }
+                stage('Build docker images') {
+                    steps {
+                        dir ("backend/deployment") {
+                            echo 'Building...'
+                            //sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
+                        }    
+                    }
+                }
+                stage('Publish docker image') {
+                    steps {
+                        dir ("backend/deployment") {
+                            echo 'Publish...'
+                        }    
+                    }
+                }
+                stage('Cleanup docker image') {
+                    steps {
+                        dir ("backend/deployment") {
+                            echo 'Cleanup...'
+                            sh 'docker ps -aq | xargs --no-run-if-empty docker rm'
+                        }    
+                    }
                 }
             }
         }
-        stage ('Test - Backend') {
-            steps {
-                dir("backend") {
-                    echo 'Testing...'
-                    sh 'mvn verify -Dcheckstyle.skip'     
+        stage('Build and publish docker image of backend') {
+            agent {
+                    docker {
+	                    image "docker:dind"
+                            args "-u root"
+ 		    }
+            }
+            stages {
+                stage('Login') {
+                    steps {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+                    }
                 }
-            }
-        }
-        stage ('Checkstyle - Backend') {
-            steps {
-                dir("backend") {
-                   echo 'Checkstyle...'
-                   sh 'mvn checkstyle:check'
+                stage('Build') {
+                    steps {
+                        sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest -f backend/deployment/Dockerfile .'
+                    }
                 }
-            }
-        }
-        stage ('Package - Backend') {
-            steps {
-                dir("backend") {
-                   echo 'Creating package...'
-                   sh 'mvn package -DskipTests -Dcheckstyle.skip'
+                stage('Publish') {
+                    steps {
+                        echo 'Published stub'
+                    }
                 }
-            }
-        }
-        stage ('Build docker images - Backend') {
-            steps {
-                dir ("backend/deployment") {
-                   echo 'Building...'
-                   //sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
-                 }    
-            }
-        }
-
-        stage ('Publish docker image - Backend') {
-            steps {
-                dir ("backend/deployment") {
-                   echo 'Publish...'
-                }    
-            }
-        }
-
-        stage ('Cleanup docker image - Backend') {
-            steps {
-                dir ("backend/deployment") {
-                   echo 'Cleanup...'
-                   sh 'docker ps -aq | xargs --no-run-if-empty docker rm'
-                }    
             }
         }
     }
     post { 
         always {
             dir("backend") {
-             sh 'mvn clean'
+                sh 'mvn clean'
+                sh 'docker images -q | xargs --no-run-if-empty docker rmi'
             }
         }
     }
