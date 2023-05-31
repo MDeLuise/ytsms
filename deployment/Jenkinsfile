@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_ID = credentials('DOCKER_ID')
         DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+        BUILDER_NAME = 'mbuilder'
+        SERVICE = 'ytsms'
     }
 
     stages {
@@ -44,11 +46,14 @@ pipeline {
                         dir("backend") {
                             echo 'Packaging...'
                             sh 'mvn package -DskipTests -Dcheckstyle.skip'
+                            echo 'Stash files'
+                            sh 'ls target/'
+                            stash includes: 'target/*.jar', name: 'jarFiles'
                         }
                     }
                 }
             }
-            post { 
+            post {
                 always {
                     dir("backend") {
                         sh 'mvn clean'
@@ -59,16 +64,28 @@ pipeline {
         stage('Build and publish docker image of backend') {
             agent any
             stages {
-                stage('Init') {
+                stage('Login') {
                     steps {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
-                        sh '(docker context inspect mybuilder && docker context use mybuilder) || docker context create mybuilder'
-			            //sh '(docker buildx inspect mybuilder && docker buildx use mybuilder) || docker buildx create --name mybuilder --use --bootstrap'
                     }
                 }
-                stage('Build') {
+                stage("Create Buildx Builder") {
                     steps {
-                        sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $DOCKER_ID/ytsms-backend:latest -f backend/deployment/Dockerfile .'
+                        sh """
+                        docker context create $BUILDER_NAME
+                        docker context use $BUILDER_NAME
+                        docker buildx create --use $BUILDER_NAME
+                        """
+                    }
+                }
+                stage("Build multi-arch image") {
+                    steps {
+                        dir("backend") {
+                            unstash 'jarFiles'
+                            sh """
+                                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_ID/$SERVICE-backend:latest -f deployment/Dockerfile .
+                            """
+                        }
                     }
                 }
                 stage('Publish') {
@@ -79,10 +96,12 @@ pipeline {
             }
             post { 
                 always {
-                    sh 'docker images -q | xargs --no-run-if-empty docker rmi'
-                    sh 'docker logout'
-                    sh 'docker context rm mybuilder'
-                    sh 'docker buildx rm mybuilder'
+                    sh """
+                        docker stop \$(docker ps -a -q)
+                        docker images -q | xargs --no-run-if-empty docker rmi -f
+                        docker buildx use default
+                        docker context rm $BUILDER_NAME
+                    """
                 }
             }
         }
