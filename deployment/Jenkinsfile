@@ -11,8 +11,8 @@ pipeline {
             agent {
                     docker {
 	                    image "maven:3-eclipse-temurin-20"
-                            args "-u root"
- 		    }
+                        args "-u root"
+ 		            }
             }
             stages {
                 stage('Build') {
@@ -47,27 +47,11 @@ pipeline {
                         }
                     }
                 }
-                stage('Build docker images') {
-                    steps {
-                        dir ("backend/deployment") {
-                            echo 'Building...'
-                            //sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest'
-                        }    
-                    }
-                }
-                stage('Publish docker image') {
-                    steps {
-                        dir ("backend/deployment") {
-                            echo 'Publish...'
-                        }    
-                    }
-                }
-                stage('Cleanup docker image') {
-                    steps {
-                        dir ("backend/deployment") {
-                            echo 'Cleanup...'
-                            sh 'docker ps -aq | xargs --no-run-if-empty docker rm'
-                        }    
+            }
+            post { 
+                always {
+                    dir("backend") {
+                        sh 'mvn clean'
                     }
                 }
             }
@@ -75,14 +59,16 @@ pipeline {
         stage('Build and publish docker image of backend') {
             agent any
             stages {
-                stage('Login') {
+                stage('Init') {
                     steps {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
+                        sh '(docker context inspect mybuilder && docker context use mybuilder) || docker context create mybuilder'
+			            //sh '(docker buildx inspect mybuilder && docker buildx use mybuilder) || docker buildx create --name mybuilder --use --bootstrap'
                     }
                 }
                 stage('Build') {
                     steps {
-                        sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t msdeluise/ytsms-backend:latest -f backend/deployment/Dockerfile .'
+                        sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $DOCKER_ID/ytsms-backend:latest -f backend/deployment/Dockerfile .'
                     }
                 }
                 stage('Publish') {
@@ -91,14 +77,13 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-    post { 
-        always {
-            dir("backend") {
-                sh 'mvn clean'
-                sh 'docker images -q | xargs --no-run-if-empty docker rmi'
-		sh 'docker logout'
+            post { 
+                always {
+                    sh 'docker images -q | xargs --no-run-if-empty docker rmi'
+                    sh 'docker logout'
+                    sh 'docker context rm mybuilder'
+                    sh 'docker buildx rm mybuilder'
+                }
             }
         }
     }
