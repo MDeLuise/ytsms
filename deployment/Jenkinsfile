@@ -8,6 +8,13 @@ pipeline {
         SERVICE = 'ytsms'
     }
 
+    parameters {
+        booleanParam(name: "PUSH_IMAGES", defaultValue: false, description: "Push the images on Docker Hub")
+        booleanParam(name: "BUILD_IMAGES", defaultValue: false, description: "Build the docker images")
+        text(name: "IMAGES_VERSION", defaultValue: "vX.X.X", description: "Version of the docker images")
+        booleanParam(name: "IMAGES_LATEST", defaultValue: true, description: "Update the latest version of the images on Docker Hub")
+    }
+
     stages {
         stage('Build and test the backend') {
             agent {
@@ -46,8 +53,6 @@ pipeline {
                         dir("backend") {
                             echo 'Packaging...'
                             sh 'mvn package -DskipTests -Dcheckstyle.skip'
-                            echo 'Stash files'
-                            sh 'ls target/'
                             stash includes: 'target/*.jar', name: 'jarFiles'
                         }
                     }
@@ -65,11 +70,13 @@ pipeline {
             agent any
             stages {
                 stage('Login') {
+                    when { environment name: 'BUILD_IMAGES', value: 'true' }
                     steps {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin'
                     }
                 }
                 stage("Create Buildx Builder") {
+                    when { environment name: 'BUILD_IMAGES', value: 'true' }
                     steps {
                         sh """
                         docker context create $BUILDER_NAME
@@ -79,16 +86,18 @@ pipeline {
                     }
                 }
                 stage("Build multi-arch image") {
+                    when { environment name: 'BUILD_IMAGES', value: 'true' }
                     steps {
                         dir("backend") {
                             unstash 'jarFiles'
                             sh """
-                                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_ID/$SERVICE-backend:latest -f deployment/Dockerfile .
+                                docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_ID/$SERVICE-backend:$params.IMAGES_VERSION -f deployment/Dockerfile .
                             """
                         }
                     }
                 }
                 stage('Publish') {
+                    when { environment name: 'PUSH_IMAGES', value: 'true' }
                     steps {
                         echo 'Published stub'
                     }
@@ -96,12 +105,16 @@ pipeline {
             }
             post { 
                 always {
-                    sh """
-                        docker stop \$(docker ps -a -q)
-                        docker images -q | xargs --no-run-if-empty docker rmi -f
-                        docker buildx use default
-                        docker context rm $BUILDER_NAME
-                    """
+                    script {
+                        if (params.BUILD_IMAGES) {
+                            sh """
+                                docker stop \$(docker ps -a -q)
+                                docker images -q | xargs --no-run-if-empty docker rmi -f
+                                docker buildx use default
+                                docker context rm $BUILDER_NAME
+                            """
+                        }
+                    }
                 }
             }
         }
