@@ -84,14 +84,24 @@ pipeline {
                                         CI=false npm run build
                                     """
                                 }
-                            } 
+                            }
                         }
                         stage('Test') {
                             steps {
-                                dir("backend") {
+                                dir("frontend") {
+                                    sh """
+                                        npm test -- --watchAll=false
+                                    """
                                     echo 'Testing...'
                                     echo 'Testing stub'  
                                 }
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            dir("frontend") {
+                                sh 'rm -rf build'
                             }
                         }
                     }
