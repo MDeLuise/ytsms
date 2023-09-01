@@ -120,7 +120,8 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                 if (fileReader.result != null) {
                     var lines = (fileReader.result as string).split(/\r\n|\n/);
                     for (var line = 0; line < lines.length - 1; line++) {
-                        let importedChannelId = lines[line].split(",")[1];
+                        let splittedChannelInfo: string[] = lines[line].split(",");
+                        let importedChannelId = splittedChannelInfo[splittedChannelInfo.length - 1];
                         props.requestor.post("subscription", {
                             "channelId": importedChannelId
                         })
