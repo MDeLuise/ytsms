@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function Subscription(props: {
+export default function SubscriptionComponent(props: {
     id: string,
     channelName: string,
     channelId: string,

@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import { useEffect, useRef, useState } from "react";
-import { NavigateFunction, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate, useSearchParams } from "react-router-dom";
 import Video from "./Video";
 import Navbar from "./Navbar";
 import Pagination from '@mui/material/Pagination';
@@ -10,14 +10,20 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Typography from '@mui/material/Typography';
 import "../style/Home.scss";
 import "../style/Base.scss";
+import { ScraperStatus } from "../interfaces";
 
-export default function Home(props: { isLoggedIn: () => boolean, requestor: AxiosInstance, colorMode: any }) {
+export default function Home(props: {
+    isLoggedIn: () => boolean,
+    requestor: AxiosInstance,
+    colorMode: any;
+}) {
     let navigate: NavigateFunction = useNavigate();
     const [videoRes, setVideoRes] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [searchParams, _setSearchParams] = useSearchParams();
     const [channels, setChannels] = useState<{}[]>([]);
+    const [scraperStatus, setScraperStatus] = useState<ScraperStatus>();
     const pageSize = process.env.PAGE_SIZE != null ? process.env.PAGE_SIZE : 25;
     const windowSize = useRef([window.innerWidth, window.innerHeight]);
 
@@ -63,8 +69,8 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                             thumbnailLink={vid.thumbnailLink}
                             view={vid.view}
                             duration={vid.secondsDuration}
-                            publishedAt={vid.publishedAt} />)
-                })
+                            publishedAt={vid.publishedAt} />);
+                });
                 setVideoRes(video);
                 window.scrollTo({
                     top: 0,
@@ -109,6 +115,17 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
         return windowSize.current[0] > 760 ? 2 : 1;
     };
 
+    const refreshVideoFromBackend = (): void => {
+        props.requestor.post("/video/_refresh");
+    };
+
+    const getScraperStatus = (): void => {
+        props.requestor.get("/info/scraping-status")
+            .then((res) => {
+                setScraperStatus(res.data);
+            });
+    };
+
     useEffect(() => {
         if (!props.isLoggedIn()) {
             navigate("/auth");
@@ -120,6 +137,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
         }
         getAllChannels();
         fetchVideo(0);
+        getScraperStatus();
     }, []);
 
     return (
@@ -127,13 +145,46 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
             <Navbar
                 channels={channels}
                 colorMode={props.colorMode}
-                getVideoFromChannel={(channelId: string) => { fetchVideoFromChannels(0, channelId) }}
+                getVideoFromChannel={(channelId: string) => { fetchVideoFromChannels(0, channelId); }}
                 getAllVideo={() => fetchAllVideo(0)}
             />
+            {
+                channels.length !== 0 &&
+                <Typography style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "5px",
+                    marginBottom: "20px",
+                    fontStyle: scraperStatus?.scraping ? "italic" : "normal",
+                }}>
+                    {
+                        scraperStatus?.isLastFailed ?
+                            <span>Error: last refresh failed</span> :
+                            <span>
+                                {
+                                    scraperStatus?.scraping ?
+                                        "refreshing..." :
+                                        scraperStatus?.lastScrape != undefined ?
+                                            "Last refresh: " + new Date(scraperStatus.lastScrape).toLocaleString() :
+                                            "n/a"
+                                }
+                                {
+                                    " | "
+                                }
+                                {
+                                    !scraperStatus?.scraping &&
+                                    <Link to={"#"} onClick={refreshVideoFromBackend}>
+                                        refresh now
+                                    </Link>
+                                }
+                            </span>
+                    }
+                </Typography>
+            }
             <div id="video-wrapper">{videoRes}</div>
             {
                 channels.length == 0 ?
-                    <Typography variant="body1" gutterBottom sx={{ display: "flex", justifyContent: "center", margin: "auto" }}>
+                    <Typography variant="body1" gutterBottom sx={{ display: "flex", justifyContent: "center" }}>
                         You have no subscription :(<br />Go to the settings to add following channels.
                     </Typography> :
                     <Pagination
@@ -150,7 +201,7 @@ export default function Home(props: { isLoggedIn: () => boolean, requestor: Axio
                         boundaryCount={getMarginPagesDisplayed()}
                         onChange={(_event, value) => {
                             searchParams.set("page", value.toString());
-                            fetchVideo(value - 1)
+                            fetchVideo(value - 1);
                             setCurrentPage(value - 1);
                         }}
                         sx={{

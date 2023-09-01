@@ -1,4 +1,4 @@
-export interface subscription {
+export interface Subscription {
     id: Number,
     channelId: string,
     channelName?: string,
@@ -6,7 +6,7 @@ export interface subscription {
     channelThumbnailLink?: string,
 }
 
-export interface video {
+export interface Video {
     id: Number,
     title?: string,
     publishedAt?: Date,
@@ -15,4 +15,10 @@ export interface video {
     thumbnailLink?: string,
     view?: Number,
     secondsDuration?: Number,
+}
+
+export interface ScraperStatus {
+    lastScrape: Date,
+    scraping: boolean,
+    isLastFailed: boolean,
 }

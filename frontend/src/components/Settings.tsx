@@ -2,7 +2,7 @@ import { AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import Subscription from "./Subscription";
+import SubscriptionComponent from "./Subscription";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -17,12 +17,12 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import MenuItem from '@mui/material/MenuItem';
 import "../style/Settings.scss";
 import { Alert, Snackbar } from "@mui/material";
-import { subscription } from "../interfaces";
+import { Subscription } from "../interfaces";
 
 export default function Settings(props: { isLoggedIn: () => boolean, requestor: AxiosInstance, colorMode: any }) {
     let navigate: NavigateFunction = useNavigate();
     const [subscriptionComponents, setSubscriptionComponents] = useState<any[]>([]);
-    const [subscriptions, setSubscriptions] = useState<subscription[]>([]);
+    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [channelId, setChannelId] = useState<string>();
     const [backend, setBackend] = useState<string>();
     const [invidiousInstance, setInvidiousInstance] = useState<string>("");
@@ -39,7 +39,7 @@ export default function Settings(props: { isLoggedIn: () => boolean, requestor: 
                 let subscriptions: any[] = [];
                 response.data.forEach((sub: any) => {
                     subscriptions.push(
-                        <Subscription
+                        <SubscriptionComponent
                             channelName={sub.channelName}
                             channelId={sub.channelId}
                             requestor={props.requestor}

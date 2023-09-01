@@ -1,6 +1,8 @@
 package com.github.mdeluise.ytsms.video.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.mdeluise.ytsms.scraper.VideoScraper;
+import com.github.mdeluise.ytsms.scraper.VideoScraperFactory;
 import com.github.mdeluise.ytsms.security.apikey.ApiKeyFilter;
 import com.github.mdeluise.ytsms.security.apikey.ApiKeyRepository;
 import com.github.mdeluise.ytsms.security.apikey.ApiKeyService;
@@ -45,6 +47,10 @@ public class VideoControllerTest {
     VideoService videoService;
     @MockBean
     VideoDTOConverter videoDTOConverter;
+    @MockBean
+    VideoScraperFactory videoScraperFactory;
+    @MockBean
+    VideoScraper videoScraper;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -68,6 +74,7 @@ public class VideoControllerTest {
         Mockito.when(videoService.getAll(Mockito.any())).thenReturn(new PageImpl<>(List.of(video1, video2)));
         Mockito.when(videoDTOConverter.convertToDTO(video1)).thenReturn(videoDTO1);
         Mockito.when(videoDTOConverter.convertToDTO(video2)).thenReturn(videoDTO2);
+        Mockito.when(videoScraperFactory.getVideoScraper()).thenReturn(videoScraper);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/video")).andExpect(MockMvcResultMatchers.status().isOk())
                .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray())

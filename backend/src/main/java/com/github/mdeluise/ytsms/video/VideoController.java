@@ -1,5 +1,7 @@
 package com.github.mdeluise.ytsms.video;
 
+import com.github.mdeluise.ytsms.scraper.VideoScraper;
+import com.github.mdeluise.ytsms.scraper.VideoScraperFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +25,15 @@ import java.util.List;
 public class VideoController {
     private final VideoService videoService;
     private final VideoDTOConverter videoDtoConverter;
+    private final VideoScraper videoScraper;
 
 
     @Autowired
-    public VideoController(VideoService videoService, VideoDTOConverter videoDtoConverter) {
+    public VideoController(VideoService videoService, VideoDTOConverter videoDtoConverter,
+                           VideoScraperFactory videoScraperFactory) {
         this.videoService = videoService;
         this.videoDtoConverter = videoDtoConverter;
+        this.videoScraper = videoScraperFactory.getVideoScraper();
     }
 
 
@@ -58,5 +64,16 @@ public class VideoController {
         Pageable paging = PageRequest.of(pageNo, pageSize, sortDir, sortBy);
         Page<VideoDTO> result = videoService.getAllByChannelIds(paging, channelIds).map(videoDtoConverter::convertToDTO);
         return ResponseEntity.ok(result);
+    }
+
+
+    @PostMapping("/_refresh")
+    @Operation(
+        summary = "Perform a fetch searching for new published videos.",
+        description = "Perform a fetch searching for new published videos."
+    )
+    public ResponseEntity<String> refreshVideos() {
+        videoScraper.saveNewVideo();
+        return ResponseEntity.ok("Start refresh");
     }
 }

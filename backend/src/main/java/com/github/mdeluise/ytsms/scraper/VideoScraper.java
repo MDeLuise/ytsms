@@ -6,4 +6,6 @@ public interface VideoScraper {
     void saveNewVideo();
 
     void saveNewVideo(Channel channel);
+
+    ScraperStatus getStatus();
 }

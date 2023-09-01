@@ -6,6 +6,7 @@
 <img src="https://img.shields.io/github/v/release/MDeLuise/ytsms?style=for-the-badge&color=%23DC143C" />
 </p>
 
+<p align="center"><i><b>[Still under "initial" development, some features may be unstable or change in the future, although database schemas should be stable. A first release version is planned to be packed soon].</b></i></p>
 <p align="center">YTSMS is a <b>self-hosted youtube subscription management service.</b><br>Useful to keep track of new uploaded video of the followed channels, even without having a Google account.</p>
 
 <p align="center"><a href="https://github.com/MDeLuise/ytsms/#why">Why?</a> • <a href="https://github.com/MDeLuise/ytsms/#features-highlight">Features highlights</a> • <a href="https://github.com/MDeLuise/ytsms/#getting-started">Getting started</a> • <a href="https://github.com/MDeLuise/ytsms/#configuration">Configuration</a> • <a href="https://github.com/MDeLuise/ytsms/#faq">FAQ</a></p>

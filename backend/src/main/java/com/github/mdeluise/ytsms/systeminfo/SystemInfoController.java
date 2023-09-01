@@ -1,5 +1,8 @@
 package com.github.mdeluise.ytsms.systeminfo;
 
+import com.github.mdeluise.ytsms.scraper.ScraperStatus;
+import com.github.mdeluise.ytsms.scraper.VideoScraper;
+import com.github.mdeluise.ytsms.scraper.VideoScraperFactory;
 import com.google.common.base.Strings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -17,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class SystemInfoController {
     private final String version;
     private final boolean youTubeApiFetchingModeEnabled;
+    private final VideoScraper videoScraper;
 
 
-    public SystemInfoController(@Value("${app.version}") String version, @Value("${youtube.key}") String youtubeApiKey) {
+    public SystemInfoController(@Value("${app.version}") String version, @Value("${youtube.key}") String youtubeApiKey,
+                                VideoScraperFactory videoScraperFactory) {
         this.version = version;
         this.youTubeApiFetchingModeEnabled = !Strings.isNullOrEmpty(youtubeApiKey);
+        this.videoScraper = videoScraperFactory.getVideoScraper();
     }
 
 
@@ -52,5 +58,15 @@ public class SystemInfoController {
     )
     public ResponseEntity<String> getFetchingMode() {
         return ResponseEntity.ok(youTubeApiFetchingModeEnabled ? "YouTube_API" : "Scraping");
+    }
+
+
+    @GetMapping("/scraping-status")
+    @Operation(
+        summary = "Status of the scraper",
+        description = "Return info about the scraping."
+    )
+    public ResponseEntity<ScraperStatus> getLastFetchDate() {
+        return ResponseEntity.ok(videoScraper.getStatus());
     }
 }
