@@ -33,6 +33,8 @@ Ytsms takes care of this problem allowing you to get updated about new videos fr
 Installing ytsms is pretty straight forward, in order to do so follow these steps:
 1. Create a folder where you want to place all ytsms related files.
 1. Inside that folder, create the following files:
+    * Create a directory `mkdir certificates`
+    * Give the permission of the directory `chmod 777 ./certificates`
     * `docker-compose.yml`:
     ```yaml
     version: "3"
